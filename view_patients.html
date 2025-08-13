@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <title>View Patients | PatientSys</title>  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">  
+  <style>  
+    :root {  
+      --bg-dark: #0f1e3f;  
+      --panel: #1b3a70;  
+      --card: #1f2d45;  
+      --radius: 12px;  
+      --transition: .35s cubic-bezier(.25, .8, .25, 1);  
+    }  * {  
+  box-sizing: border-box;  
+  margin: 0;  
+  padding: 0;  
+}  
+
+body {  
+  font-family: 'Poppins', sans-serif;  
+  background: linear-gradient(135deg, #0f1e3f 0%, #1b3a70 70%);  
+  color: #e8edf7;  
+  min-height: 100vh;  
+}  
+
+.dashboard-wrapper {  
+  display: flex;  
+  position: relative;  
+  overflow-x: hidden;  
+}  
+
+.sidebar {  
+  width: 260px;  
+  flex-shrink: 0;  
+  background: rgba(255, 255, 255, 0.04);  
+  backdrop-filter: blur(12px);  
+  padding: 25px 20px;  
+  display: flex;  
+  flex-direction: column;  
+  gap: 20px;  
+  position: fixed;  
+  top: 0;  
+  left: 0;  
+  height: 100vh;  
+  z-index: 1001;  
+  transform: translateX(0);  
+  transition: transform var(--transition);  
+  box-shadow: 2px 0 30px rgba(0, 0, 0, 0.4);  
+}  
+
+.sidebar.closed {  
+  transform: translateX(-100%);  
+}
+
+.sidebar.collapsed {
+width: 70px;
+}
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .label {
+display: none;
+}
+.sidebar.collapsed .menu a:hover::after {
+content: attr(data-tooltip);
+position: absolute;
+left: 100%;
+top: 50%;
+transform: translate(8px, -50%);
+background: rgba(0, 0, 0, 0.85);
+color: white;
+padding: 6px 10px;
+border-radius: 6px;
+font-size: 12px;
+white-space: nowrap;
+z-index: 2000;
+}
+
+.brand {  
+  display: flex;  
+  align-items: center;  
+  gap: 12px;  
+}  
+
+.brand img {  
+  width: 42px;  
+}  
+
+.brand-text h2 {  
+  font-size: 20px;  
+}  
+
+.menu {  
+  display: flex;  
+  flex-direction: column;  
+  gap: 10px;  
+}  
+
+.menu a {  
+  text-decoration: none;  
+  color: black;  
+  padding: 10px 16px;  
+  border-radius: 10px;  
+}  
+
+.menu a.active,  
+.menu a:hover {  
+  background: rgba(255, 255, 255, 0.1);  
+}  
+
+.menu a.logout {  
+  margin-top: auto;  
+  background: rgba(255, 80, 80, 0.1);  
+  color: #ffaaaa;  
+}  
+
+.main {  
+  flex: 1;  
+  margin-left: 260px;  
+  padding: 30px;  
+  min-height: 100vh;  
+  transition: margin 0.3s ease;  
+}  
+
+.topbar {
+
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+flex-wrap: wrap;
+gap: 15px;
+margin-bottom: 30px;
+}
+
+.topbar .titles {
+display: flex;
+flex-direction: column;
+}
+
+.topbar h1 {
+font-size: 24px;
+margin-bottom: 4px;
+}
+
+.topbar .description {
+font-size: 14px;
+color: #b0c4f5;
+}
+
+@media (max-width: 600px) {
+.topbar {
+flex-direction: column;
+align-items: flex-start;
+}
+
+.search {
+width: 100%;
+max-width: 100%;
+}
+}
+
+.search {  
+  padding: 10px 14px;  
+  border-radius: 8px;  
+  border: none;  
+  font-size: 14px;  
+  max-width: 300px;  
+  background: rgba(255, 255, 255, 0.8);  
+  color: #1f2d45;  
+}  
+
+.table-wrapper {  
+  overflow-x: auto;  
+  background: rgba(255, 255, 255, 0.03);  
+  padding: 20px;  
+  border-radius: 12px;  
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);  
+}  
+
+table {  
+  width: 100%;  
+  border-collapse: collapse;  
+  color: #e8edf7;  
+  font-size: 14px;  
+}  
+
+thead th {  
+  text-align: left;  
+  padding: 12px 14px;  
+  background: rgba(255, 255, 255, 0.08);  
+}  
+
+tbody tr:nth-child(even) {  
+  background: rgba(255, 255, 255, 0.02);  
+}  
+
+.btn-view {  
+  background: linear-gradient(135deg, #00b4db, #0083b0);  
+  color: #fff;  
+  padding: 8px 12px;  
+  border: none;  
+  border-radius: 6px;  
+  cursor: pointer;  
+  font-weight: 600;  
+  transition: background-color 0.3s ease;  
+}  
+
+.btn-view:hover {  
+  background: #0073a5;  
+}  
+
+.tooltip {  
+  display: flex;  
+  align-items: center;  
+  gap: 8px;  
+}  
+
+.label {  
+  font-size: 14px;  
+}  
+
+.toggle-btn {  
+  display: none;  
+  position: fixed;  
+  top: 15px;  
+  left: 15px;  
+  background: linear-gradient(135deg, #00d2ff, #007bff);  
+  padding: 10px 14px;  
+  border-radius: 8px;  
+  color: #fff;  
+  font-size: 22px;  
+  cursor: pointer;  
+  z-index: 1100;  
+  box-shadow: 0 15px 35px rgba(0, 123, 255, 0.4);  
+  border: none;  
+  transition: opacity 0.3s ease;  
+}  
+
+.toggle-btn.hidden {  
+  opacity: 0;  
+  pointer-events: none;  
+}  
+
+.backdrop {  
+  position: fixed;  
+  inset: 0;  
+  background: rgba(0, 0, 0, 0.4);  
+  z-index: 1000;  
+  opacity: 0;  
+  pointer-events: none;  
+  transition: opacity 0.3s ease;  
+}  
+
+.backdrop.visible {  
+  opacity: 1;  
+  pointer-events: auto;  
+}  
+
+@media (max-width: 1024px) {  
+  .main {  
+    margin-left: 0;  
+  }  
+
+  .toggle-btn {  
+    display: block;  
+  }  
+}    [data-theme="light"] {
+
+background: #f4f7fa;
+color: #1f2d45;
+}
+
+[data-theme="light"] .sidebar {
+background: rgba(255,255,255,0.08);
+}
+
+[data-theme="light"] .menu a.active,
+[data-theme="light"] .menu a:hover {
+background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .menu a.logout {
+background: rgba(255,80,80,0.08);
+color: #d9534f;
+}
+
+[data-theme="light"] .search-box input {
+background: #fdfdfd;
+color: #1f2d45;
+}
+
+[data-theme="light"] .role-badge {
+background: linear-gradient(135deg,#007bff,#00d2ff);
+color: #fff;
+}
+
+[data-theme="light"] .card.small {
+background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .card-title {
+color: #6c757d;
+}
+
+[data-theme="light"] .action-btn.outline {
+border: 2px solid rgba(0, 0, 0, 0.2);
+color: #007bff;
+}
+
+[data-theme="light"] .table-wrapper {
+background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] th {
+background: rgba(0, 0, 0, 0.05);
+color: #1f2d45;
+}
+
+[data-theme="light"] td {
+color: #333;
+}
+
+[data-theme="light"] .mini-btn {
+background: #007bff;
+}
+.sidebar.open {
+transform: translateX(0);
+}
+@media (max-width: 1024px) {
+.sidebar {
+transform: translateX(-100%);
+}
+
+.sidebar.open {
+transform: translateX(0);
+}
+}
+.loader-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 30, 63, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.loader-screen.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.logo-wrapper {
+  position: relative;
+  width: 300px;
+  height: 195px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-wrapper .loader-logo {
+  position: absolute;
+  width: 80px;
+  z-index: 2;
+  animation: pop 0.8s ease-out;
+}
+.logo-wrapper .ekg {
+  width: 100%;
+  height: auto;
+  z-index: 1;
+}
+.loader-screen p {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes drawHeartbeat {
+  0% { stroke-dashoffset: 750; opacity: 0.3; }
+  70% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.heartbeat-path {
+  animation: drawHeartbeat 1.5s infinite ease-out forwards;
+}
+
+  </style>  
+</head>  <body data-theme="dark">
+<div id="loader" class="loader-screen active">
+  <div class="loader-content">
+    <div class="logo-wrapper">
+      <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Loading logo" class="loader-logo">
+      <svg class="ekg ekg--original" viewBox="0 0 300 195" preserveAspectRatio="xMinYMin">
+        <g transform="translate(-0.13703948,-768.38124)">
+          <path
+            stroke="#2eec71"
+            stroke-dasharray="750"
+            stroke-dashoffset="750"
+            d="m 2.8096902,901.62064 27.8352018,0 29.835201,0 c 9.945067,0 32.20852,-29.26009 43.835197,0 l 15.8352,0 13.39911,23.5426 16.58744,-153.5426 19.3139,188.52018 16.07175,-58.52018 28.48543,0 c 9.15882,-23.20628 26.67189,-23.20628 34.48542,0 l 22.48542,0 26.48543,0"
+            style="fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+            class="heartbeat-path" />
+        </g>
+      </svg>
+    </div>
+    <p>Patient Management System</p>
+  </div>
+</div>
+  <div class="backdrop" id="backdrop" aria-hidden="true"></div>  
+  <button aria-label="Toggle sidebar" class="toggle-btn" id="toggleBtn">☰</button>    <div class="layout">  
+    <nav class="sidebar" id="sidebar">  
+      <div class="brand">  
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Logo">  
+        <div class="brand-text">  
+          <h2 style="margin:0; font-size:18px;">PatientSys</h2>  
+          <div style="font-size:12px; color:#a0b0d0;">Dashboard</div>  
+        </div>  
+      </div>  
+      <div class="menu">  
+        <a href="dashboard.html" data-tooltip="Home" class="tooltip"><span class="label">Home</span></a>  
+        <a href="add_patient.html" data-tooltip="Add Patient" class="tooltip"><span class="label">Add Patient</span></a>  
+        <a href="view_patients.html" data-tooltip="View Patients" class="tooltip active"><span class="label">View Patients</span></a>  
+        <a href="settings.html" data-tooltip="Settings" class="tooltip"><span class="label">Settings</span></a>  
+        <a href="index.html" data-tooltip="Logout" class="tooltip logout"><span class="label">Logout</span></a>  
+      </div>  
+    </nav>    <main class="main" id="mainContent">  
+<div class="topbar">  
+  <div class="titles">  
+    <h1>View Patients</h1>  
+    <div class="description">Search, filter and manage patient records</div>  
+  </div>  
+  <input type="text" id="searchInput" oninput="filterPatients()" placeholder="Search by name or ID..." class="search" aria-label="Search patients">  
+</div>  
+      <div class="table-wrapper">  
+        <table aria-label="Patients table">  
+          <thead>  
+            <tr>  
+              <th>ID</th>  
+              <th>Name</th>  
+              <th>Last Visit</th>  
+              <th>Condition</th>  
+              <th>Phone</th>  
+              <th>Action</th>  
+            </tr>  
+          </thead>  
+          <tbody id="patientTable"></tbody>  
+        </table>  
+      </div>  
+    </main>  
+  </div>    <script>  
+  const sidebar = document.getElementById('sidebar');  
+  const backdrop = document.getElementById('backdrop');  
+  const toggleBtn = document.getElementById('toggleBtn');  
+  const mainContent = document.getElementById('mainContent');  
+  const searchInput = document.getElementById('searchInput');  
+  
+  const patients = [  
+    { id: 'P1001', name: 'Ama Serwaa', lastVisit: '2025-08-01', condition: 'Hypertension', phone: '+233504123456' },  
+    { id: 'P1002', name: 'Kwame Mensah', lastVisit: '2025-07-30', condition: 'Diabetes', phone: '+233507654321' },  
+    { id: 'P1003', name: 'Esi Boateng', lastVisit: '2025-07-28', condition: 'Asthma', phone: '+233505998877' },  
+    { id: 'P1004', name: 'Kojo Owusu', lastVisit: '2025-07-25', condition: 'Malaria', phone: '+233506112233' },  
+    { id: 'P1005', name: 'Adwoa Yeboah', lastVisit: '2025-07-20', condition: 'Anemia', phone: '+233509445566' }  
+  ];  
+  
+  let collapsed = false;  
+  
+  function renderTable(data) {  
+    const tbody = document.getElementById('patientTable');  
+    tbody.innerHTML = '';  
+    data.forEach(p => {  
+      const tr = document.createElement('tr');  
+      tr.innerHTML = `  
+        <td style="padding:12px 14px;">${p.id}</td>  
+        <td style="padding:12px 14px;">${p.name}</td>  
+        <td style="padding:12px 14px;">${p.lastVisit}</td>  
+        <td style="padding:12px 14px;">${p.condition}</td>  
+        <td style="padding:12px 14px;">${p.phone}</td>  
+        <td style="padding:12px 14px;"><button class="btn-view" aria-label="View ${p.name}">View</button></td>  
+      `;  
+      tbody.appendChild(tr);  
+    });  
+  }  
+  
+  function filterPatients() {  
+    const q = searchInput.value.toLowerCase().trim();  
+    const filtered = patients.filter(p =>  
+      p.name.toLowerCase().includes(q) ||  
+      p.id.toLowerCase().includes(q) ||  
+      p.condition.toLowerCase().includes(q)  
+    );  
+    renderTable(filtered);  
+  }  
+  
+  function toggleSidebar() {  
+    if (window.innerWidth < 1024) {  
+      const isOpen = sidebar.classList.contains('open');  
+      sidebar.classList.toggle('open', !isOpen);  
+      backdrop.classList.toggle('visible', !isOpen);  
+      toggleBtn.classList.toggle('hidden', !isOpen);  
+    } else {  
+      collapsed = !collapsed;  
+      sidebar.classList.toggle('collapsed', collapsed);  
+      mainContent.style.marginLeft = collapsed ? '70px' : '260px';  
+    }  
+  }  
+  
+  function closeSidebar() {  
+    sidebar.classList.remove('open');  
+    backdrop.classList.remove('visible');  
+    toggleBtn.classList.remove('hidden');  
+  }  
+  
+  function adjustLayout() {  
+    if (window.innerWidth < 1024) {  
+      sidebar.classList.remove('collapsed');  
+      sidebar.classList.remove('open');  
+      mainContent.style.marginLeft = '0';  
+      backdrop.classList.remove('visible');  
+      toggleBtn.classList.remove('hidden');  
+    } else {  
+      sidebar.classList.remove('open');  
+      sidebar.classList.toggle('collapsed', collapsed);  
+      mainContent.style.marginLeft = collapsed ? '70px' : '260px';  
+      backdrop.classList.remove('visible');  
+      toggleBtn.classList.remove('hidden');  
+    }  
+  }  
+  
+  toggleBtn.addEventListener('click', toggleSidebar);  
+  backdrop.addEventListener('click', closeSidebar);  
+  searchInput.addEventListener('input', filterPatients);  
+  window.addEventListener('resize', adjustLayout);  
+  window.addEventListener('load', () => {  
+    adjustLayout();  
+    renderTable(patients);  
+  
+    const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{"darkMode": true}');  
+    document.body.setAttribute('data-theme', prefs.darkMode ? 'dark' : 'light');  
+  });  
+</script> 
+<script>
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    setTimeout(() => {
+      loader.classList.remove("active");
+      setTimeout(() => { loader.style.display = "none"; }, 500);
+    }, 2000);
+  });
+</script>
+</body>  
+</html>  

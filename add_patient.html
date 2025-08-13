@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Patient | PatientSys</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --transition:.35s cubic-bezier(.25,.8,.25,1); }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg,#0f1e3f 0%,#1b3a70 70%);
+      color: #e8edf7;
+      min-height: 100vh;
+    }
+    .layout { display:flex; min-height:100vh; position:relative; }
+    .backdrop {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.35);
+      display:none; z-index:998;
+      transition:opacity .25s;
+    }
+    .toggle-btn {
+      position: static;
+      top: 15px; left: 15px;
+      z-index: 1100;
+      padding: 10px 14px;
+      background: linear-gradient(135deg,#00d2ff,#007bff);
+      color: #fff; font-size: 22px;
+      border: none; border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 15px 35px rgba(0,123,255,0.4);
+      transition: opacity .2s;
+    }
+    .toggle-btn.hidden { opacity: 0; pointer-events: none; }
+    @media (max-width: 1024px) {
+      .toggle-btn {
+        position: fixed;
+        top: 15px; left: 15px;
+        z-index: 1100;
+      }
+    }
+    .sidebar {
+      width:260px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      padding:25px 20px;
+      display:flex; flex-direction:column; gap:20px;
+      box-shadow:2px 0 30px rgba(0,0,0,0.4);
+      position:fixed; top:0; left:0;
+      height:100vh; z-index:999;
+      transition: width var(--transition), transform var(--transition);
+      overflow:hidden;
+    }
+    .sidebar.collapsed { width:70px; }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .brand img { width:38px; flex-shrink:0; }
+    .brand-text { overflow:hidden; transition: opacity .2s; }
+    .sidebar.collapsed .brand-text { display:none; }
+
+    .menu { display:flex; flex-direction:column; gap:8px; flex:1; margin-top:5px; }
+    .menu a {
+      display:flex; align-items:center; gap:10px;
+      padding:10px 14px; text-decoration:none; color:inherit;
+      border-radius:8px; font-weight:500; transition:background .2s;
+      white-space:nowrap; position:relative;
+    }
+    .menu a.active, .menu a:hover { background: rgba(255,255,255,0.1); }
+    .menu a.logout { margin-top:auto; background: rgba(255,80,80,0.1); color:#ffaaaa; }
+    .label { flex:1; }
+    .sidebar.collapsed .label { display:none; }
+    .sidebar.collapsed .menu a:hover::after{
+      content: attr(data-tooltip);
+      position:absolute; left:100%; top:50%; transform:translate(8px,-50%);
+      background: rgba(0,0,0,0.85); padding:6px 10px; border-radius:6px; font-size:12px; white-space:nowrap; z-index:2000;
+    }
+    .main-content {
+      flex:1; padding:30px 35px; margin-left:260px;
+      transition: margin-left var(--transition);
+    }
+    @media (max-width: 1024px) {
+      .main-content { margin-left:0; padding:20px 20px 40px; }
+      .toggle-btn { display:block; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+    }
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; gap:15px; margin-bottom:25px;
+    }
+    .left-controls { display:flex; align-items:center; gap:15px; }
+    .search-box input {
+      padding:12px 16px; border-radius:10px; border:none; outline:none; font-size:14px;
+      background: rgba(255,255,255,0.9); color:#1f2d45; font-weight:500;
+      min-width:220px; max-width:400px; width:100%;
+    }
+    .user-info { display:flex; align-items:center; gap:15px; }
+    .role-badge {
+      background: linear-gradient(135deg,#00d2ff,#007bff);
+      padding:6px 14px; border-radius:999px; font-size:12px; font-weight:600; color:#fff;
+    }
+    .avatar {
+      width:42px; height:42px; background:#1f2d45; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; font-size:14px; color:#fff;
+      box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    }
+    .theme-toggle {
+      padding:10px 14px; border-radius:10px; border:2px solid rgba(255,255,255,0.6);
+      background: transparent; color:#d9e4ff; font-weight:600; cursor:pointer;
+    }
+    .form-container {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px; border-radius: 12px; max-width: 700px; margin: 0 auto;
+    }
+    .form-container h2 { text-align:center; margin-bottom:20px; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-group { display:flex; flex-direction:column; }
+    .form-group.full { grid-column:1 / -1; }
+    .form-group label { margin-bottom:6px; font-weight:600; }
+    .form-group input, .form-group select, .form-group textarea {
+      padding:12px; border-radius:8px; border:none; font-size:14px;
+      background: rgba(255,255,255,0.9); color:#1f2d45;
+    }
+    .form-actions { display:flex; justify-content:center; gap:12px; margin-top:20px; }
+    .btn {
+      padding:12px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:700;
+      background: linear-gradient(135deg,#007bff,#00d2ff); color:#fff;
+      box-shadow:0 15px 35px -5px rgba(0,123,255,0.4);
+    }
+    .btn.secondary { background: transparent; color:#d9e4ff; border:2px solid rgba(255,255,255,0.6); }
+    .loader-screen {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 30, 63, 0.95);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .loader-screen.active { opacity: 1; pointer-events: auto; }
+    .loader-content { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .logo-wrapper { position:relative; width:300px; height:195px; display:flex; align-items:center; justify-content:center; }
+    .logo-wrapper .loader-logo { position:absolute; width:80px; z-index:2; animation: pop 0.8s ease-out; }
+    .logo-wrapper .ekg { width:100%; height:auto; z-index:1; }
+    .loader-screen p { margin-top:20px; font-size:18px; color:#fff; letter-spacing:.5px; }
+    @keyframes pop { 0%{ transform:scale(0.5); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+    @keyframes drawHeartbeat { 0%{ stroke-dashoffset:750; opacity:.3; } 70%{ stroke-dashoffset:0; opacity:1; } 100%{ stroke-dashoffset:0; opacity:0; } }
+    .heartbeat-path { animation: drawHeartbeat 1.5s infinite ease-out forwards; }
+    [data-theme="light"] { background:#f4f7fa; color:#1f2d45; }
+    [data-theme="light"] .sidebar { background: rgba(255,255,255,0.08); }
+    [data-theme="light"] .menu a.active,
+    [data-theme="light"] .menu a:hover { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .menu a.logout { background: rgba(255,80,80,0.08); color:#d9534f; }
+    [data-theme="light"] .search-box input { background:#fdfdfd; color:#1f2d45; }
+    [data-theme="light"] .role-badge { background: linear-gradient(135deg,#007bff,#00d2ff); color:#fff; }
+    [data-theme="light"] .btn.secondary { border-color: rgba(0,0,0,0.2); color:#007bff; }
+    [data-theme="light"] .form-container { background: rgba(0,0,0,0.04); }
+  </style>
+</head>
+<body data-theme="dark">
+  <div id="loader" class="loader-screen active" aria-hidden="true">
+    <div class="loader-content">
+      <div class="logo-wrapper">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Loading logo" class="loader-logo" />
+        <svg class="ekg" viewBox="0 0 300 195" preserveAspectRatio="xMinYMin" aria-hidden="true">
+          <g transform="translate(-0.13703948,-768.38124)">
+            <path
+              stroke="#2eec71"
+              stroke-dasharray="750"
+              stroke-dashoffset="750"
+              d="m 2.8096902,901.62064 27.8352018,0 29.835201,0 c 9.945067,0 32.20852,-29.26009 43.835197,0 l 15.8352,0 13.39911,23.5426 16.58744,-153.5426 19.3139,188.52018 16.07175,-58.52018 28.48543,0 c 9.15882,-23.20628 26.67189,-23.20628 34.48542,0 l 22.48542,0 26.48543,0"
+              style="fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+              class="heartbeat-path" />
+          </g>
+        </svg>
+      </div>
+      <p>Patient Management System</p>
+    </div>
+  </div>
+
+  <div class="backdrop" id="backdrop"></div>
+  <button class="toggle-btn" id="toggleBtn" aria-label="Toggle sidebar">☰</button>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar" aria-label="Primary">
+      <div class="brand">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Logo" />
+        <div class="brand-text">
+          <h2>PatientSys</h2>
+          <span style="font-size:12px; color:#a0b0d0;"> Nurse's Workspace</span>
+        </div>
+      </div>
+      <nav class="menu">
+        <a href="dashboard.html" class="tooltip" data-tooltip="Home"><span class="label">Home</span></a>
+        <a href="add_patient.html" class="tooltip active" data-tooltip="Add Patient"><span class="label">Add Patient</span></a>
+        <a href="view_patients.html" class="tooltip" data-tooltip="View Patients"><span class="label">View Patients</span></a>
+        <a href="settings.html" class="tooltip" data-tooltip="Settings"><span class="label">Settings</span></a>
+        <a href="index.html" class="logout tooltip" data-tooltip="Logout"><span class="label">Logout</span></a>
+      </nav>
+    </aside>
+    <main class="main-content" aria-label="Main content" id="mainContent">
+      <header class="topbar">
+        <div class="left-controls">
+          <div class="search-box">
+            <input type="text" id="global-search" placeholder="Search patient by name or ID..." aria-label="Global search" />
+          </div>
+        </div>
+        <div class="user-info">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">Toggle Theme</button>
+          <div class="role-badge">Nurse</div>
+          <div class="avatar" title="Nurse">NS</div>
+        </div>
+      </header>
+      <section class="form-container" aria-labelledby="addPatientTitle">
+        <h2 id="addPatientTitle">Add New Patient</h2>
+        <form id="add-patient-form" novalidate>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="patient-name">Full Name</label>
+              <input type="text" id="patient-name" name="name" required placeholder="e.g., Ama Serwaa" />
+            </div>
+
+            <div class="form-group">
+              <label for="patient-age">Age</label>
+              <input type="number" id="patient-age" name="age" required min="0" step="1" placeholder="e.g., 34" />
+            </div>
+
+            <div class="form-group">
+              <label for="patient-gender">Gender</label>
+              <select id="patient-gender" name="gender" required>
+                <option value="">-- Select Gender --</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="patient-phone">Phone Number</label>
+              <input type="tel" id="patient-phone" name="phone" required placeholder="+233 55 123 4567" />
+            </div>
+
+            <div class="form-group full">
+              <label for="patient-condition">Condition</label>
+              <input type="text" id="patient-condition" name="condition" required placeholder="e.g., Hypertension" />
+            </div>
+
+            <div class="form-group full">
+              <label for="patient-notes">Notes (optional)</label>
+              <textarea id="patient-notes" name="notes" rows="3" placeholder="Additional context or symptoms"></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn" type="submit">Save Patient</button>
+            <button class="btn secondary" type="reset">Clear</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const mainContent = document.getElementById('mainContent');
+
+    let collapsed = false;
+
+    function openSidebar() {
+      if (window.innerWidth < 900) {
+        sidebar.classList.add('open');
+        backdrop.style.display = 'block';
+        toggleBtn.classList.add('hidden');
+      }
+    }
+
+    function closeSidebar() {
+      if (window.innerWidth < 900) {
+        sidebar.classList.remove('open');
+        backdrop.style.display = 'none';
+        toggleBtn.classList.remove('hidden');
+      }
+    }
+
+    function toggleSidebar() {
+      if (window.innerWidth < 900) {
+        const isOpen = sidebar.classList.contains('open');
+        if (isOpen) closeSidebar(); else openSidebar();
+      } else {
+        collapsed = !collapsed;
+        if (collapsed) {
+          sidebar.classList.add('collapsed');
+          mainContent.style.marginLeft = '70px';
+          toggleBtn.classList.remove('hidden');
+        } else {
+          sidebar.classList.remove('collapsed');
+          mainContent.style.marginLeft = '260px';
+          toggleBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    function adjustLayout() {
+      if (window.innerWidth < 900) {
+        sidebar.classList.remove('collapsed');
+        mainContent.style.marginLeft = '0';
+        toggleBtn.classList.remove('hidden');
+        closeSidebar();
+      } else {
+        backdrop.style.display = 'none';
+        if (!collapsed) {
+          sidebar.classList.remove('collapsed');
+          mainContent.style.marginLeft = '260px';
+          toggleBtn.classList.add('hidden');
+        } else {
+          sidebar.classList.add('collapsed');
+          mainContent.style.marginLeft = '70px';
+          toggleBtn.classList.remove('hidden');
+        }
+      }
+    }
+
+    window.addEventListener('resize', adjustLayout);
+    backdrop.addEventListener('click', closeSidebar);
+    toggleBtn.addEventListener('click', toggleSidebar);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+    const themeToggle = document.getElementById('themeToggle');
+    function applySavedTheme() {
+      const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');
+      const isDark = prefs.darkMode !== false; // default dark
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeToggle?.setAttribute('aria-pressed', String(!isDark));
+    }
+    function toggleTheme() {
+      const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');
+      const current = document.body.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('settingsPrefs', JSON.stringify({ ...prefs, darkMode: next === 'dark' }));
+      themeToggle?.setAttribute('aria-pressed', String(next === 'light'));
+    }
+    themeToggle?.addEventListener('click', toggleTheme);
+    window.addEventListener('load', () => {
+      applySavedTheme();
+      adjustLayout();
+      const loader = document.getElementById('loader');
+      setTimeout(() => {
+        loader.classList.remove('active');
+        setTimeout(() => { loader.style.display = 'none'; }, 500);
+      }, 2000);
+    });
+    document.getElementById('global-search')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+
+        const input = e.target.value.trim();
+        if (input) {
+          const nameField = document.getElementById('patient-name');
+          if (nameField && !nameField.value) nameField.value = input;
+        }
+      }
+    });
+    const form = document.getElementById('add-patient-form');
+
+    function generatePatientId() {
+      const s = Date.now().toString().slice(-6);
+      return 'P' + s;
+    }
+
+    function getPatients() {
+      try { return JSON.parse(localStorage.getItem('patients') || '[]'); }
+      catch { return []; }
+    }
+
+    function setPatients(arr) {
+      localStorage.setItem('patients', JSON.stringify(arr));
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      if (!data.name || !data.age || !data.gender || !data.phone || !data.condition) {
+        alert('Please fill out all required fields.');
+        return;
+      }
+
+      const patient = {
+        id: generatePatientId(),
+        name: String(data.name).trim(),
+        age: Number(data.age),
+        gender: data.gender,
+        phone: String(data.phone).trim(),
+        condition: String(data.condition).trim(),
+        notes: String(data.notes || '').trim(),
+        lastVisit: new Date().toISOString().slice(0,10)
+      };
+
+      const list = getPatients();
+      list.unshift(patient);
+      setPatients(list);
+
+      alert(`Patient ${patient.name} saved with ID ${patient.id}.`);
+      form.reset();
+      location.href = 'view_patients.html';
+    });
+  </script>
+</body>
+</html>

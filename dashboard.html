@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doctor's Page | Patient Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color">
+  <style>
+  @media (max-width: 1024px) {
+  .toggle-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1100;
+  }
+}
+    :root {
+      --transition:.35s cubic-bezier(.25,.8,.25,1);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg,#0f1e3f 0%,#1b3a70 70%);
+      color: #e8edf7;
+      min-height:100vh;
+    }
+    .layout {display:flex; min-height:100vh; position:relative;}
+    .backdrop {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.35);
+      display:none;
+      z-index:998;
+      transition:opacity .25s;
+    }
+    .toggle-btn {
+      position:static;
+      top:15px;
+      left:15px;
+      z-index:1100;
+      padding:10px 14px;
+      background: linear-gradient(135deg,#00d2ff,#007bff);
+      color:#fff;
+      font-size:22px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      box-shadow:0 15px 35px rgba(0,123,255,0.4);
+      transition:opacity .2s;
+    }
+    .toggle-btn.hidden {opacity:0; pointer-events:none;}
+
+    .sidebar {
+      width:260px;
+      background:rgba(255,255,255,0.04);
+      backdrop-filter:blur(12px);
+      padding:25px 20px;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+      box-shadow:2px 0 30px rgba(0,0,0,0.4);
+      position:fixed;
+      top:0;
+      left:0;
+      height:100vh;
+      z-index:999;
+      transition:width var(--transition), transform var(--transition);
+      overflow:hidden;
+    }
+    .sidebar.collapsed {width:70px;}
+    .sidebar .brand {display:flex; align-items:center; gap:12px;}
+    .sidebar .brand img {width:38px; flex-shrink:0;}
+    .sidebar .brand-text {overflow:hidden; transition:opacity .2s;}
+    .sidebar.collapsed .brand-text {display:none;}
+    .menu {display:flex; flex-direction:column; gap:8px; flex:1; margin-top:5px;}
+    .menu a {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      text-decoration:none;
+      color:inherit;
+      border-radius:8px;
+      font-weight:500;
+      transition:background .2s;
+      white-space:nowrap;
+      position:relative;
+    }
+    .menu a.active, .menu a:hover {background:rgba(255,255,255,0.1);}
+    .menu a.logout {margin-top:auto; background:rgba(255,80,80,0.1); color:#ffaaaa;}
+    .icon {font-size:16px; flex-shrink:0;}
+    .label {flex:1;}
+    .sidebar.collapsed .label {display:none;}
+    .sidebar.collapsed .menu a:hover::after {
+      content: attr(data-tooltip);
+      position:absolute;
+      left:100%;
+      top:50%;
+      transform:translate(8px,-50%);
+      background: rgba(0,0,0,0.85);
+      padding:6px 10px;
+      border-radius:6px;
+      font-size:12px;
+      white-space:nowrap;
+      z-index:2000;
+    }
+
+    .main-content {
+      flex:1;
+      padding:30px 35px;
+      margin-left:260px;
+      transition:margin-left var(--transition);
+    }
+    .topbar {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:15px;
+      margin-bottom:25px;
+    }
+    .left-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}    
+    .search-box input {
+      padding:12px 16px;
+      border-radius:10px;
+      border:none;
+      outline:none;
+      font-size:14px;
+      background: rgba(255,255,255,0.9);
+      color:#1f2d45;
+      font-weight:500;
+      min-width:220px;
+      max-width:400px;
+      width:100%;
+    }
+    .user-info {
+      display:flex;
+      align-items:center;
+      gap:15px;
+    }
+    .role-badge {
+      background: linear-gradient(135deg,#00d2ff,#007bff);
+      padding:6px 14px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:600;
+      color:#fff;
+    }
+    .avatar {
+      width:42px;
+      height:42px;
+      background:#1f2d45;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      font-size:14px;
+      color:#fff;
+      box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    }
+    .summary-cards {
+      display:flex;
+      gap:20px;
+      flex-wrap: wrap;
+      margin-bottom:25px;
+    }
+    .card.small {
+      flex:1 1 200px;
+      background: rgba(255,255,255,0.08);
+      padding:18px 22px;
+      border-radius:14px;
+      position:relative;
+      overflow:hidden;
+      min-width:160px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .card-title {
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      font-weight:600;
+      color:#a0b0d0;
+    }
+    .card-value {
+      font-size:28px;
+      font-weight:700;
+    }
+    .actions {
+      margin:15px 0 30px;
+      display:flex;
+      gap:15px;
+      flex-wrap:wrap;
+    }
+    .action-btn {
+      padding:14px 22px;
+      border-radius:10px;
+      border:none;
+      font-weight:600;
+      cursor:pointer;
+      background: linear-gradient(135deg,#007bff,#00d2ff);
+      color:#fff;
+      box-shadow:0 15px 35px -5px rgba(0,123,255,0.4);
+      transition: transform .2s;
+    }
+    .action-btn.outline {
+      background: transparent;
+      border:2px solid rgba(255,255,255,0.6);
+      color:#d9e4ff;
+    }
+    .action-btn:hover {
+      transform:translateY(-2px);
+    }
+    .recent {
+      margin-top:10px;
+    }
+    .section-header {
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+    .section-header h3 {
+      margin:0;
+      font-size:22px;
+    }
+    .section-header small {
+      color:#b0bce0;
+    }
+    .table-wrapper {
+      overflow-x:auto;
+      background: rgba(255,255,255,0.06);
+      border-radius:12px;
+      padding:8px;
+    }
+    table {
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+    }
+    th,td {
+      padding:12px 14px;
+      text-align:left;
+      white-space:nowrap;
+    }
+    th {
+      background: rgba(255,255,255,0.05);
+      font-weight:600;
+      border-bottom:1px solid rgba(255,255,255,0.1);
+    }
+    td {
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    .mini-btn {
+      padding:6px 12px;
+      border:none;
+      background: rgba(0,123,255,0.9);
+      color:white;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:12px;
+      transition: filter .2s;
+    }
+    .mini-btn:hover {
+      filter:brightness(1.1);
+    }
+
+    @media (max-width: 1024px) {
+      .main-content {
+        margin-left:0;
+        padding:20px 20px 40px;
+      }
+      .toggle-btn {
+        display:block;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        transform:translateX(-100%);
+      }
+      .sidebar.open {
+        transform:translateX(0);
+      }
+    }
+    [data-theme="light"] {
+  background: #f4f7fa;
+  color: #1f2d45;
+}
+
+[data-theme="light"] .sidebar {
+  background: rgba(255,255,255,0.08);
+}
+
+[data-theme="light"] .menu a.active,
+[data-theme="light"] .menu a:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .menu a.logout {
+  background: rgba(255,80,80,0.08);
+  color: #d9534f;
+}
+
+[data-theme="light"] .search-box input {
+  background: #fdfdfd;
+  color: #1f2d45;
+}
+
+[data-theme="light"] .role-badge {
+  background: linear-gradient(135deg,#007bff,#00d2ff);
+  color: #fff;
+}
+
+[data-theme="light"] .card.small {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .card-title {
+  color: #6c757d;
+}
+
+[data-theme="light"] .action-btn.outline {
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  color: #007bff;
+}
+
+[data-theme="light"] .table-wrapper {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] th {
+  background: rgba(0, 0, 0, 0.05);
+  color: #1f2d45;
+}
+
+[data-theme="light"] td {
+  color: #333;
+}
+
+[data-theme="light"] .mini-btn {
+  background: #007bff;
+}
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 2000;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  z-index: 2001;
+  display: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.modal-content {
+  color: #fff;
+}
+
+[data-theme="light"] .modal {
+  background: #fff;
+  color: #1f2d45;
+}
+
+.modal.show {
+  display: block;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-backdrop.show {
+  display: block;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 20px;
+  cursor: pointer;
+}
+.loader-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 30, 63, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.loader-screen.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.logo-wrapper {
+  position: relative;
+  width: 300px;
+  height: 195px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-wrapper .loader-logo {
+  position: absolute;
+  width: 80px;
+  z-index: 2;
+  animation: pop 0.8s ease-out;
+}
+.logo-wrapper .ekg {
+  width: 100%;
+  height: auto;
+  z-index: 1;
+}
+.loader-screen p {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes drawHeartbeat {
+  0% { stroke-dashoffset: 750; opacity: 0.3; }
+  70% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.heartbeat-path {
+  animation: drawHeartbeat 1.5s infinite ease-out forwards;
+}
+  </style>
+</head>
+<body data-theme="dark">
+<div id="loader" class="loader-screen active">
+  <div class="loader-content">
+    <div class="logo-wrapper">
+      <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Loading logo" class="loader-logo">
+      <svg class="ekg ekg--original" viewBox="0 0 300 195" preserveAspectRatio="xMinYMin">
+        <g transform="translate(-0.13703948,-768.38124)">
+          <path
+            stroke="#2eec71"
+            stroke-dasharray="750"
+            stroke-dashoffset="750"
+            d="m 2.8096902,901.62064 27.8352018,0 29.835201,0 c 9.945067,0 32.20852,-29.26009 43.835197,0 l 15.8352,0 13.39911,23.5426 16.58744,-153.5426 19.3139,188.52018 16.07175,-58.52018 28.48543,0 c 9.15882,-23.20628 26.67189,-23.20628 34.48542,0 l 22.48542,0 26.48543,0"
+            style="fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+            class="heartbeat-path" />
+        </g>
+      </svg>
+    </div>
+    <p>Patient Management System</p>
+  </div>
+</div>
+  <div class="backdrop" id="backdrop"></div>
+  <button class="toggle-btn" id="toggleBtn" aria-label="Toggle sidebar">☰</button>
+<div class="modal-backdrop" id="modalBackdrop"></div>
+<div class="modal" id="patientModal">
+  <div class="modal-content">
+    <span class="modal-close" id="closeModal">&times;</span>
+    <h2>Patient Details</h2>
+    <p><strong>ID:</strong> <span id="modalPatientId"></span></p>
+    <p><strong>Name:</strong> <span id="modalPatientName"></span></p>
+    <p><strong>Last Visit:</strong> <span id="modalPatientVisit"></span></p>
+  </div>
+</div>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar">
+      <div class="brand">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Logo" />
+        <div class="brand-text">
+          <h2>PatientSys</h2>
+          <span style="font-size:12px; color:#a0b0d0;">Doctor's Dashboard</span>
+        </div>
+      </div>
+      <div class="menu">
+         <a href="dashboard.html" class="tooltip active" data-tooltip="Home"><span class="label">Home</span></a>
+        <a href="add_patient.html" class="tooltip " data-tooltip="Add Patient"><span class="label">Add Patient</span></a>
+        <a href="view_patients.html" class="tooltip" data-tooltip="View Patients"><span class="label">View Patients</span></a>
+        <a href="settings.html" class="tooltip" data-tooltip="Settings"><span class="label">Settings</span></a>
+        <a href="index.html" class="logout tooltip" data-tooltip="Logout"><span class="label">Logout</span></a>
+      </div>
+    </nav>
+
+    <main class="main-content" aria-label="Main content" id="mainContent">
+ <header class="topbar">
+  <div class="left-controls">
+    <div class="search-box">
+      <input type="text" id="global-search" placeholder="Search patient by name or ID..." />
+    </div>
+  </div>
+  <div class="user-info">
+    <div class="role-badge">Doctor</div>
+    <div class="avatar">DJ</div>
+  </div>
+</header>
+<h1 id="welcome-message" style="margin-bottom: 25px;">Welcome, Doctor!</h1>
+      <section class="summary-cards">
+        <div class="card small">
+          <div class="card-title">Total Patients</div>
+          <div class="card-value" id="total-patients">—</div>
+        </div>
+        <div class="card small">
+          <div class="card-title">New This Week</div>
+          <div class="card-value" id="new-week">—</div>
+        </div>
+        <div class="card small">
+          <div class="card-title">Pending Follow-ups</div>
+          <div class="card-value" id="pending">2</div>
+        </div>
+      </section>
+
+      <section class="actions">
+        <button class="action-btn" onclick="location.href='prescription.html'">Prescription</button>
+        <button class="action-btn outline" onclick="location.href='view_patients.html'">View All Patients</button>
+      </section>
+
+      <section class="recent">
+        <div class="section-header">
+          <h3>Recent Patients</h3>
+          <small>Most recently added</small>
+        </div>
+        <div class="table-wrapper">
+          <table id="recent-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const mainContent = document.getElementById('mainContent');
+
+    let collapsed = false;
+
+    let patients = [
+      { id: 'P1001', name: 'Ama Serwaa', lastVisit: '2025-08-01' },
+      { id: 'P1002', name: 'Kwame Mensah', lastVisit: '2025-08-04' },
+      { id: 'P1003', name: 'Esi Boateng', lastVisit: '2025-07-29' },
+      { id: 'P1004', name: 'Kojo Owusu', lastVisit: '2025-08-05' },
+      { id: 'P1005', name: 'Adwoa Yeboah', lastVisit: '2025-08-03' }
+    ];
+
+    function openSidebar() {
+      if (window.innerWidth < 900) {
+        sidebar.classList.add('open');
+        backdrop.style.display = 'block';
+        toggleBtn.classList.add('hidden');
+      }
+    }
+
+    function closeSidebar() {
+      if (window.innerWidth < 900) {
+        sidebar.classList.remove('open');
+        backdrop.style.display = 'none';
+        toggleBtn.classList.remove('hidden');
+      }
+    }
+
+    function toggleSidebar() {
+      if (window.innerWidth < 900) {
+        const isOpen = sidebar.classList.contains('open');
+        if (isOpen) closeSidebar();
+        else openSidebar();
+      } else {
+        collapsed = !collapsed;
+        if (collapsed) {
+          sidebar.classList.add('collapsed');
+          mainContent.style.marginLeft = '70px';
+          toggleBtn.classList.remove('hidden');
+        } else {
+          sidebar.classList.remove('collapsed');
+          mainContent.style.marginLeft = '260px';
+          toggleBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    function adjustLayout() {
+      if (window.innerWidth < 900) {
+        sidebar.classList.remove('collapsed');
+        mainContent.style.marginLeft = '0';
+        toggleBtn.classList.remove('hidden');
+        closeSidebar();
+      } else {
+        backdrop.style.display = 'none';
+        if (!collapsed) {
+          sidebar.classList.remove('collapsed');
+          mainContent.style.marginLeft = '260px';
+          toggleBtn.classList.add('hidden');
+        } else {
+          sidebar.classList.add('collapsed');
+          mainContent.style.marginLeft = '70px';
+          toggleBtn.classList.remove('hidden');
+        }
+      }
+    }
+
+    function renderRecent(list = []) {
+      const tbody = document.querySelector('#recent-table tbody');
+      tbody.innerHTML = '';
+      list.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.id}</td>
+          <td>${p.name}</td>
+          <td><button class="mini-btn" onclick="viewPatient('${p.id}')">View</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterRecent() {
+      const q = document.getElementById('global-search').value.trim().toLowerCase();
+      if (!q) {
+        renderRecent(patients);
+        return;
+      }
+      const filtered = patients.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.id.toLowerCase().includes(q)
+      );
+      renderRecent(filtered);
+    }
+
+ function viewPatient(id) {
+  const patient = patients.find(p => p.id === id);
+  if (!patient) return;
+  document.getElementById('modalPatientId').textContent = patient.id;
+  document.getElementById('modalPatientName').textContent = patient.name;
+  document.getElementById('modalPatientVisit').textContent = patient.lastVisit;
+  document.getElementById('modalBackdrop').classList.add('show');
+  document.getElementById('patientModal').classList.add('show');
+}
+    window.addEventListener('resize', adjustLayout);
+    window.addEventListener('load', () => {
+      adjustLayout();
+      document.getElementById('total-patients').textContent = patients.length;
+      const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+      const newThisWeek = patients.filter(p => new Date(p.lastVisit) >= weekAgo).length;
+      document.getElementById('new-week').textContent = newThisWeek;
+      renderRecent(patients);
+    });
+
+    backdrop.addEventListener('click', closeSidebar);
+    document.getElementById('toggleBtn').addEventListener('click', toggleSidebar);
+    document.getElementById('global-search')?.addEventListener('input', filterRecent);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+window.addEventListener('load', () => {
+  const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');
+  document.body.setAttribute('data-theme', prefs.darkMode ? 'dark' : 'light');
+});
+const doctorName = localStorage.getItem('doctorName') || 'Dr. James Carter';
+document.getElementById('welcome-message').textContent = `Welcome, ${doctorName}!`;
+document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('modalBackdrop').classList.remove('show');
+  document.getElementById('patientModal').classList.remove('show');
+});
+document.getElementById('modalBackdrop').addEventListener('click', () => {
+  document.getElementById('modalBackdrop').classList.remove('show');
+  document.getElementById('patientModal').classList.remove('show');
+});
+  </script>
+<script>
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    setTimeout(() => {
+      loader.classList.remove("active");
+      setTimeout(() => { loader.style.display = "none"; }, 500);
+    }, 2000);
+  });
+</script>
+</body>
+</html>

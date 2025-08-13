@@ -1,0 +1,559 @@
+
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <title>Settings | PatientSys</title>  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">  
+  <style>  
+    :root {  
+      --transition: .35s cubic-bezier(.25,.8,.25,1);  
+    }  
+    * { box-sizing:border-box; margin:0; padding:0; }  
+    body {  
+      font-family: 'Poppins', sans-serif;  
+      background: linear-gradient(135deg,#0f1e3f 0%,#1b3a70 70%);  
+      color: #e8edf7;  
+      min-height:100vh;  
+      transition: background .3s, color .3s;  
+    }  
+    [data-theme="light"] {  
+      background: #f4f7fa;  
+      color: #1f2d45;  
+    }  
+    [data-theme="light"] .sidebar {  
+      background: rgba(255,255,255,0.08);  
+    }  
+    [data-theme="light"] .settings-section {  
+      background: #fff;  
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);  
+    }  
+ [data-theme="light"] input:not(.switch) {
+  background: #fdfdfd;
+  color: #1f2d45;
+}
+    .dashboard-wrapper {  
+      display: flex;  
+      position: relative;  
+      overflow-x: hidden;  
+    } 
+    .sidebar {  
+      width: 260px;  
+      flex-shrink: 0;  
+      background: rgba(255,255,255,0.04);  
+      backdrop-filter: blur(12px);  
+      padding: 25px 20px;  
+      display: flex;  
+      flex-direction: column;  
+      gap: 20px;  
+      position: fixed;  
+      top: 0;  
+      left: 0;  
+      height: 100vh;  
+      z-index: 1001;  
+      transform: translateX(0);  
+      transition: transform var(--transition);  
+      box-shadow: 2px 0 30px rgba(0,0,0,0.4);  
+    }  
+    .sidebar.closed {  
+      transform: translateX(-100%);  
+    }  
+    .brand {  
+      display: flex;  
+      align-items: center;  
+      gap: 12px;  
+    }  
+    .brand img {  
+      width: 42px;  
+    }  
+    .brand-text h2 {  
+      margin: 0;  
+      font-size: 20px;  
+      font-weight: 700;  
+      line-height: 1;  
+    }  
+    .brand-text span {  
+      font-size: 12px;  
+      color: #a0b0d0;  
+    }  
+    .menu {  
+      display: flex;  
+      flex-direction: column;  
+      gap: 8px;  
+      margin-top: 5px;  
+    }  
+    .menu a {  
+      padding: 12px 16px;  
+      border-radius: 10px;  
+      text-decoration: none;  
+      color: inherit;  
+      font-weight: 500;  
+      transition: background .25s;  
+      display: block;  
+    }  
+    .menu a.active,  
+    .menu a:hover {  
+      background: rgba(255,255,255,0.1);  
+    }  
+    .menu a.logout {  
+      margin-top: auto;  
+      background: rgba(255,80,80,0.1);  
+      color: #ffaaaa;  
+    } 
+.sidebar-toggle {  
+  display: none;  
+  position: fixed;  
+  top: 15px;  
+  left: 15px;  
+  background: linear-gradient(135deg,#00d2ff,#007bff);  
+  padding: 10px 14px;  
+  border-radius: 8px;  
+  color: #fff;  
+  font-size: 22px;  
+  cursor: pointer;  
+  z-index: 1100;  
+  border: none;  
+  transition: opacity .25s ease;  
+}  
+.sidebar-toggle.hidden {  
+  opacity: 0;  
+  pointer-events: none;  
+}  
+.backdrop {  
+  position: fixed;  
+  inset:0;  
+  background: rgba(0,0,0,0.35);  
+  backdrop-filter: blur(2px);  
+  z-index:1000;  
+  opacity:0;  
+  pointer-events:none;  
+  transition: opacity .25s ease;  
+}  
+.backdrop.visible {  
+  opacity:1;  
+  pointer-events:auto;  
+}  
+
+.main-content {  
+  flex:1;  
+  margin-left:260px;  
+  padding:30px 35px;  
+  transition: margin .3s ease;  
+  max-width: 100%;  
+}  
+h1 {  
+  font-size:28px;  
+  margin-bottom:20px;  
+}  
+
+.settings-section {  
+  background: rgba(255,255,255,0.05);  
+  padding: 25px 25px 20px;  
+  border-radius: 12px;  
+  margin-bottom: 20px;  
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);  
+}  
+.settings-section h2 {  
+  font-size:20px;  
+  margin-bottom:14px;  
+  border-bottom:1px solid rgba(255,255,255,0.1);  
+  padding-bottom:6px;  
+}  
+.form-group {  
+  margin-bottom:18px;  
+}  
+label {  
+  display:block;  
+  margin-bottom:6px;  
+  font-weight:600;  
+  color: #b0c4f5;  
+}  
+input[type="text"],  
+input[type="email"],  
+input[type="password"] {  
+  width:100%;  
+  padding:12px 14px;  
+  border-radius:8px;  
+  border:none;  
+  font-size:14px;  
+  outline:none;  
+  background: rgba(255,255,255,0.9);  
+  color: #1f2d45;  
+  transition: box-shadow .2s;  
+}  
+input[type="checkbox"] {  
+  margin-right:8px;  
+  accent-color: #007bff;  
+}  
+.flex-row {  
+  display:flex;  
+  gap:20px;  
+  flex-wrap:wrap;  
+}  
+.small {  
+  font-size:13px;  
+  color:#d0dffb;  
+  margin-top:4px;  
+}  
+.save-btn {  
+  margin-top: 10px;  
+  padding: 14px 26px;  
+  background: linear-gradient(135deg,#007bff,#00d2ff);  
+  border: none;  
+  border-radius: 10px;  
+  color: #fff;  
+  font-weight: 600;  
+  cursor: pointer;  
+  box-shadow: 0 15px 35px -5px rgba(0,123,255,0.4);  
+  transition: transform .2s;  
+}  
+.save-btn:hover {  
+  transform: translateY(-1px);  
+}  
+
+.toggle-wrapper {  
+  display:flex;  
+  align-items:center;  
+  gap:10px;  
+}  
+.theme-label {  
+  margin-left: 8px;  
+  font-size:14px;  
+}  
+
+/* Responsive */  
+@media (max-width: 1024px) {  
+  .main-content {  
+    margin-left:0;  
+    padding:20px 20px 40px;  
+  }  
+  .sidebar-toggle {  
+    display:block;  
+  }  
+}  
+@media (max-width: 800px) {  
+  .flex-row {  
+    flex-direction:column;  
+  }  
+}
+.switch {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  -webkit-appearance: none;
+  background: #c6c6c6;
+  outline: none;
+  border-radius: 20px;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+.switch:checked {
+  background: #007bff;
+}
+.switch::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  background: #fff;
+  transition: transform 0.3s;
+}
+.switch:checked::before {
+  transform: translateX(24px);
+}
+.switch {
+  background: #c6c6c6;
+}
+
+[data-theme="light"] .switch {
+  background: #ccc;
+}
+
+[data-theme="dark"] .switch {
+  background: #4c4c4c;
+}
+.switch:checked {
+  background: #007bff;
+}
+.switch {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  background: linear-gradient(135deg,#007bff,#00d2ff);
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 9999;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.loader-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 30, 63, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.loader-screen.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.logo-wrapper {
+  position: relative;
+  width: 300px;
+  height: 195px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-wrapper .loader-logo {
+  position: absolute;
+  width: 80px;
+  z-index: 2;
+  animation: pop 0.8s ease-out;
+}
+.logo-wrapper .ekg {
+  width: 100%;
+  height: auto;
+  z-index: 1;
+}
+.loader-screen p {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes drawHeartbeat {
+  0% { stroke-dashoffset: 750; opacity: 0.3; }
+  70% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.heartbeat-path {
+  animation: drawHeartbeat 1.5s infinite ease-out forwards;
+}
+  </style>  
+</head>  
+<body data-theme="dark">
+<div id="loader" class="loader-screen active">
+  <div class="loader-content">
+    <div class="logo-wrapper">
+      <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Loading logo" class="loader-logo">
+      <svg class="ekg ekg--original" viewBox="0 0 300 195" preserveAspectRatio="xMinYMin">
+        <g transform="translate(-0.13703948,-768.38124)">
+          <path
+            stroke="#2eec71"
+            stroke-dasharray="750"
+            stroke-dashoffset="750"
+            d="m 2.8096902,901.62064 27.8352018,0 29.835201,0 c 9.945067,0 32.20852,-29.26009 43.835197,0 l 15.8352,0 13.39911,23.5426 16.58744,-153.5426 19.3139,188.52018 16.07175,-58.52018 28.48543,0 c 9.15882,-23.20628 26.67189,-23.20628 34.48542,0 l 22.48542,0 26.48543,0"
+            style="fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+            class="heartbeat-path" />
+        </g>
+      </svg>
+    </div>
+    <p>Patient Management System</p>
+  </div>
+</div>  
+  <div class="dashboard-wrapper">  
+    <div class="backdrop" id="backdrop"></div>  
+    <button class="sidebar-toggle" id="toggleBtn" aria-label="Toggle sidebar">☰</button>  <div class="sidebar closed" id="sidebar">  
+  <div class="brand">  
+    <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="Logo">  
+    <div class="brand-text">  
+      <h2>PatientSys</h2>  
+      <span>Dashboard</span>  
+    </div>  
+  </div>  
+  <nav class="menu">  
+    <a href="dashboard.html">Home</a>  
+    <a href="add_patient.html">Add Patient</a>  
+    <a href="view_patients.html">View Patients</a>  
+    <a href="settings.html" class="active">Settings</a>  
+    <a href="index.html" class="logout">Logout</a>  
+  </nav>  
+</div>  
+
+<main class="main-content">  
+  <h1>Settings</h1>  
+
+  <div class="settings-section">  
+    <h2>Profile</h2>  
+    <div class="form-group">  
+      <label for="username">Username</label>  
+      <input type="text" id="username" placeholder="Your name">  
+    </div>  
+    <div class="form-group">  
+      <label for="email">Email</label>  
+      <input type="email" id="email" placeholder="your@email.com">  
+    </div>  
+  </div>  
+
+  <div class="settings-section">  
+    <h2>Security</h2>  
+    <div class="form-group">  
+      <label for="password">Change Password</label>  
+      <input type="password" id="password" placeholder="New password">  
+    </div>  
+  </div>  
+
+  <div class="settings-section">  
+    <h2>Preferences</h2>  
+    <div class="flex-row">  
+      <div class="form-group" style="flex:1;">  
+      <div class="toggle-wrapper">
+  <input type="checkbox" id="darkMode" class="switch">
+  <label for="darkMode" class="theme-label">Dark Mode</label>
+</div>
+        <div class="small">Switch between light and dark appearance.</div>  
+      </div>  
+      <div class="form-group" style="flex:1;">  
+        <label>  
+          <input type="checkbox" id="notifications"> Enable Notifications  
+        </label>  
+        <div class="small">Receive system alerts and updates.</div>  
+      </div>  
+    </div>  
+  </div>  
+
+  <button class="save-btn" id="saveBtn">Save Changes</button>  
+</main>
+
+  </div>
+<div id="toast" class="toast">Settings saved successfully.
+</div>
+  <script>  
+    const sidebar = document.getElementById('sidebar');  
+    const backdrop = document.getElementById('backdrop');  
+    const toggleBtn = document.getElementById('toggleBtn');  
+  
+    function openSidebar() {  
+      sidebar.classList.remove('closed');  
+      backdrop.classList.add('visible');  
+      toggleBtn.classList.add('hidden');  
+    }  
+    function closeSidebar() {  
+      sidebar.classList.add('closed');  
+      backdrop.classList.remove('visible');  
+      toggleBtn.classList.remove('hidden');  
+    }  
+    function toggleSidebar() {  
+      if (sidebar.classList.contains('closed')) openSidebar();  
+      else closeSidebar();  
+    }  
+    toggleBtn.addEventListener('click', toggleSidebar);  
+    backdrop.addEventListener('click', closeSidebar);  
+    document.addEventListener('keydown', (e) => {  
+      if (e.key === 'Escape') closeSidebar();  
+    });  
+    function adjustInitial() {  
+      if (window.innerWidth > 1024) {  
+        sidebar.classList.remove('closed');  
+        backdrop.classList.remove('visible');  
+        toggleBtn.style.display = 'none';  
+      } else {  
+        sidebar.classList.add('closed');  
+        toggleBtn.style.display = 'block';  
+        toggleBtn.classList.remove('hidden');  
+      }  
+    }  
+    window.addEventListener('resize', adjustInitial);  
+    adjustInitial();   
+    const darkModeCheckbox = document.getElementById('darkMode');  
+    const notificationsCheckbox = document.getElementById('notifications');  
+    const saveBtn = document.getElementById('saveBtn');  
+  
+    function loadPreferences() {  
+      const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');  
+      if (prefs.darkMode) {  
+        darkModeCheckbox.checked = true;  
+        document.body.setAttribute('data-theme','dark');  
+      } else {  
+        document.body.setAttribute('data-theme','light');  
+      }  
+      if (prefs.notifications) notificationsCheckbox.checked = true;  
+      if (prefs.username) document.getElementById('username').value = prefs.username;  
+      if (prefs.email) document.getElementById('email').value = prefs.email;  
+    }  
+  
+    function saveSettings() {  
+      const prefs = {  
+        darkMode: darkModeCheckbox.checked,  
+        notifications: notificationsCheckbox.checked,  
+        username: document.getElementById('username').value.trim(),  
+        email: document.getElementById('email').value.trim()  
+      };  
+      localStorage.setItem('settingsPrefs', JSON.stringify(prefs));  
+      document.body.setAttribute('data-theme', prefs.darkMode ? 'dark' : 'light');  
+      showToast("Settings saved successfully."); 
+    }  
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+darkModeCheckbox.addEventListener('change', () => {
+  const isDark = darkModeCheckbox.checked;
+  document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
+  const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');
+  prefs.darkMode = isDark;
+  localStorage.setItem('settingsPrefs', JSON.stringify(prefs));
+});  
+notificationsCheckbox.addEventListener('change', () => {
+  const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');
+  prefs.notifications = notificationsCheckbox.checked;
+  localStorage.setItem('settingsPrefs', JSON.stringify(prefs));
+});
+    saveBtn.addEventListener('click', saveSettings);  
+  
+    loadPreferences();  
+  </script> 
+<script>
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    setTimeout(() => {
+      loader.classList.remove("active");
+      setTimeout(() => { loader.style.display = "none"; }, 500);
+    }, 2000);
+  });
+</script>
+  </body>  
+</html>  
