@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Add Patient | PatientSys</title>
+  <link rel="icon" type="image/svg+xml" href="hospital-svgrepo-com.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet" />
@@ -158,6 +159,28 @@
     [data-theme="light"] .role-badge { background: linear-gradient(135deg,#007bff,#00d2ff); color:#fff; }
     [data-theme="light"] .btn.secondary { border-color: rgba(0,0,0,0.2); color:#007bff; }
     [data-theme="light"] .form-container { background: rgba(0,0,0,0.04); }
+  .toast {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  background: linear-gradient(135deg,#007bff,#00d2ff);
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 9999;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
   </style>
 </head>
 <body data-theme="dark">
@@ -197,6 +220,7 @@
         <a href="dashboard.html" class="tooltip" data-tooltip="Home"><span class="label">Home</span></a>
         <a href="add_patient.html" class="tooltip active" data-tooltip="Add Patient"><span class="label">Add Patient</span></a>
         <a href="view_patients.html" class="tooltip" data-tooltip="View Patients"><span class="label">View Patients</span></a>
+        <a href="discharge.html" class="tooltip" data-tooltip="Discharge Patients"><span class="label">Discharge Patients</span></a>
         <a href="settings.html" class="tooltip" data-tooltip="Settings"><span class="label">Settings</span></a>
         <a href="index.html" class="logout tooltip" data-tooltip="Logout"><span class="label">Logout</span></a>
       </nav>
@@ -262,7 +286,7 @@
       </section>
     </main>
   </div>
-
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
   <script>
     const sidebar = document.getElementById('sidebar');
     const backdrop = document.getElementById('backdrop');
@@ -379,34 +403,49 @@
     function setPatients(arr) {
       localStorage.setItem('patients', JSON.stringify(arr));
     }
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form).entries());
+  
+  // Validation
+  if (!data.name || !data.age || !data.gender || !data.phone || !data.condition) {
+    showToast('Please fill out all required fields.');
+    return;
+  }
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(form).entries());
-      if (!data.name || !data.age || !data.gender || !data.phone || !data.condition) {
-        alert('Please fill out all required fields.');
-        return;
-      }
+  // Create patient object
+  const patient = {
+    id: generatePatientId(),
+    name: String(data.name).trim(),
+    age: Number(data.age),
+    gender: data.gender,
+    phone: String(data.phone).trim(),
+    condition: String(data.condition).trim(),
+    notes: String(data.notes || '').trim(),
+    lastVisit: new Date().toISOString().slice(0,10)
+  };
+  const list = getPatients();
+  list.unshift(patient);
+  setPatients(list);
+  form.reset();
+  showToast(`Patient ${patient.name} saved with ID ${patient.id}.`);
+  setTimeout(() => {
+    location.href = 'view_patients.html';
+  }, 1500);
+});
 
-      const patient = {
-        id: generatePatientId(),
-        name: String(data.name).trim(),
-        age: Number(data.age),
-        gender: data.gender,
-        phone: String(data.phone).trim(),
-        condition: String(data.condition).trim(),
-        notes: String(data.notes || '').trim(),
-        lastVisit: new Date().toISOString().slice(0,10)
-      };
+    localStorage.setItem('settingsPrefs', JSON.stringify(prefs));  
+      document.body.setAttribute('data-theme', prefs.darkMode ? 'dark' : 'light');  
+      showToast(`Patient ${patient.name} saved with ID ${patient.id}.`); 
+    function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
 
-      const list = getPatients();
-      list.unshift(patient);
-      setPatients(list);
-
-      alert(`Patient ${patient.name} saved with ID ${patient.id}.`);
-      form.reset();
-      location.href = 'view_patients.html';
-    });
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
   </script>
 </body>
 </html>
