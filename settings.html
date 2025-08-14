@@ -4,6 +4,7 @@
 <head>  
   <meta charset="UTF-8" />  
   <title>Settings | PatientSys</title>  
+  <link rel="icon" type="image/svg+xml" href="hospital-svgrepo-com.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">  
   <style>  
@@ -77,12 +78,13 @@
       font-size: 12px;  
       color: #a0b0d0;  
     }  
-    .menu {  
-      display: flex;  
-      flex-direction: column;  
-      gap: 8px;  
-      margin-top: 5px;  
-    }  
+   .menu {  
+  display: flex;  
+  flex-direction: column;  
+  gap: 8px;  
+  flex:1; 
+  margin-top:5px;
+}  
     .menu a {  
       padding: 12px 16px;  
       border-radius: 10px;  
@@ -402,6 +404,7 @@ input[type="checkbox"] {
     <a href="dashboard.html">Home</a>  
     <a href="add_patient.html">Add Patient</a>  
     <a href="view_patients.html">View Patients</a>  
+    <a href="discharge.html" class="tooltip" data-tooltip="Discharge Patients"><span class="label">Discharge Patients</span></a>
     <a href="settings.html" class="active">Settings</a>  
     <a href="index.html" class="logout">Logout</a>  
   </nav>  
