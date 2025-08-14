@@ -1,4 +1,3 @@
-/* Forgot/reset password enhancements */
 .reset-card {
   max-width: 480px;
   width: 100%;
@@ -703,3 +702,197 @@ td {
     margin-left: 260px;
   }
 }
+ :root {
+      --bg-dark:#0f1e3f;
+      --panel:#1b3a70;
+      --card:#1f2d45;
+      --radius:12px;
+      --transition:.35s cubic-bezier(.25,.8,.25,1);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #83a4d4, #b6fbff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #e8edf7;
+    }
+
+    .background {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 400px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .logo img {
+      width: 100px;
+      margin-bottom: 15px;
+    }
+
+    .logo h2 {
+      font-weight: 600;
+      margin-bottom: 25px;
+      font-size: 24px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      text-align: left;
+    }
+
+    .login-form label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #ffffffcc;
+    }
+
+    .login-form input {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: #333;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .login-form input:focus {
+      box-shadow: 0 0 0 3px #83a4d4;
+    }
+
+    .login-form button {
+      padding: 12px;
+      font-weight: bold;
+      font-size: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .login-form button:hover {
+      background-color: #0056b3;
+    }
+
+    .extras {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .extras a {
+      color: #ffffffcc;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .extras a:hover {
+      text-decoration: underline;
+    }
+    .loader-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 30, 63, 0.95);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .loader-screen.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .loader-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-wrapper {
+      position: relative;
+      width: 300px;
+      height: 195px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-wrapper .loader-logo {
+      position: absolute;
+      width: 80px;
+      z-index: 2;
+      animation: pop 0.8s ease-out;
+    }
+
+    .logo-wrapper .ekg {
+      width: 100%;
+      height: auto;
+      z-index: 1;
+    }
+
+    .loader-screen p {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes drawHeartbeat {
+      0% {
+        stroke-dashoffset: 750;
+        opacity: 0.3;
+      }
+      70% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+      100% {
+        stroke-dashoffset: 0;
+        opacity: 0;
+      }
+    }
+
+    .heartbeat-path {
+      animation: drawHeartbeat 1.5s infinite ease-out forwards;
+    }
