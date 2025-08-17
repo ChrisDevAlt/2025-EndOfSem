@@ -1,6 +1,15 @@
 
 <!DOCTYPE html>  <html lang="en">  
-<head>  
+<head> 
+  <script>
+(function() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.classList.toggle('dark-mode', savedTheme === 'dark');
+  }
+})();
+</script>
+ 
   <meta charset="UTF-8" />  
   <title>View Patients | PatientSys</title> 
   <link rel="icon" type="image/svg+xml" href="hospital-svgrepo-com.svg"> 
@@ -98,30 +107,33 @@ z-index:2000;
   flex:1; 
   margin-top:5px;
 }  
-/*James Carter */
 .menu a {    
   display:flex;
       align-items:center;
       gap:10px;
       padding:10px 14px;
       text-decoration:none;
-      color:inherit;
+      color:black;
       border-radius:8px;
       font-weight:500;
       transition:background .2s;
       white-space:nowrap;
       position:relative;
 }  
+.menu a.active,
+.menu a:hover {
+  background: #007bff;
+  color: #fff;
+  border-radius: 30px;
+}
 
-.menu a.active,  
-.menu a:hover {  
-  background: rgba(255, 255, 255, 0.1);  
-}  
 
 .menu a.logout {  
   margin-top: auto;  
   background: rgba(255, 80, 80, 0.1);  
   color: #ffaaaa;  
+  border-radius: 30px;
+
 }  
 
 .main {  
@@ -171,7 +183,7 @@ max-width: 100%;
 
 .search {  
   padding: 10px 14px;  
-  border-radius: 8px;  
+  border-radius: 30px;  
   border: none;  
   font-size: 14px;  
   max-width: 300px;  
@@ -183,13 +195,14 @@ max-width: 100%;
   overflow-x: auto;  
   background: rgba(255, 255, 255, 0.03);  
   padding: 20px;  
-  border-radius: 12px;  
+  border-radius: 50px;  
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);  
 }  
 
 table {  
   width: 100%;  
-  border-collapse: collapse;  
+  border-collapse: collapse; 
+  border-radius: 30px; 
   color: #e8edf7;  
   font-size: 14px;  
 }  
@@ -198,10 +211,11 @@ thead th {
   text-align: left;  
   padding: 12px 14px;  
   background: rgba(255, 255, 255, 0.08);  
+  
 }  
 
 tbody tr:nth-child(even) {  
-  background: rgba(255, 255, 255, 0.02);  
+  background: rgba(255, 255, 255, 0.02); 
 }  
 
 .btn-view {  
@@ -236,7 +250,7 @@ tbody tr:nth-child(even) {
   left: 15px;  
   background: linear-gradient(135deg, #00d2ff, #007bff);  
   padding: 10px 14px;  
-  border-radius: 8px;  
+  border-radius: 30px;  
   color: #fff;  
   font-size: 22px;  
   cursor: pointer;  
@@ -286,7 +300,7 @@ background: rgba(255,255,255,0.08);
 
 [data-theme="light"] .menu a.active,
 [data-theme="light"] .menu a:hover {
-background: rgba(0, 0, 0, 0.05);
+background: #007bff;
 }
 
 [data-theme="light"] .menu a.logout {
@@ -458,14 +472,16 @@ transform: translateX(0);
       <div class="table-wrapper">  
         <table aria-label="Patients table">  
           <thead>  
-            <tr>  
+            <div>
+               <tr>  
               <th>ID</th>  
               <th>Name</th>  
               <th>Last Visit</th>  
               <th>Condition</th>  
               <th>Phone</th>  
               <th>Action</th>  
-            </tr>  
+            </tr> 
+            </div>
           </thead>  
           <tbody id="patientTable"></tbody>  
         </table>  

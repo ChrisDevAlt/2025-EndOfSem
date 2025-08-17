@@ -1,562 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Settings | PatientSys</title>
+<link rel="icon" type="image/svg+xml" href="hospital-svgrepo-com.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --transition: 0.28s cubic-bezier(.25,.8,.25,1);
+    --bg: linear-gradient(135deg,#0f1e3f 0%,#1b3a70 70%);
+    --surface: rgba(255,255,255,0.06);
+    --muted: #b0c4f5;
+    --accent: #007bff;
+    --card-radius: 14px;
+    --container-gap: 20px;
+  }
+  [data-theme="light"]{
+    --bg: #f4f7fa;
+    --surface: #ffffff;
+    --muted: #6b7b96;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Poppins",sans-serif;
+    background:var(--bg);
+    color: black;
+    transition: background var(--transition), color var(--transition);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  [data-theme="light"] body{ color:#1f2d45 }
 
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-  <meta charset="UTF-8" />  
-  <title>Settings | PatientSys</title>  
-  <link rel="icon" type="image/svg+xml" href="hospital-svgrepo-com.svg">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">  
-  <style>  
-    :root {  
-      --transition: .35s cubic-bezier(.25,.8,.25,1);  
-    }  
-    * { box-sizing:border-box; margin:0; padding:0; }  
-    body {  
-      font-family: 'Poppins', sans-serif;  
-      background: linear-gradient(135deg,#0f1e3f 0%,#1b3a70 70%);  
-      color: #e8edf7;  
-      min-height:100vh;  
-      transition: background .3s, color .3s;  
-    }  
-    [data-theme="light"] {  
-      background: #f4f7fa;  
-      color: #1f2d45;  
-    }  
-    [data-theme="light"] .sidebar {  
-      background: rgba(255,255,255,0.08);  
-    }  
-    [data-theme="light"] .settings-section {  
-      background: #fff;  
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);  
-    }  
- [data-theme="light"] input:not(.switch) {
-  background: #fdfdfd;
-  color: #1f2d45;
-}
-    .dashboard-wrapper {  
-      display: flex;  
-      position: relative;  
-      overflow-x: hidden;  
-    } 
-    .sidebar {  
-      width: 260px;  
-      flex-shrink: 0;  
-      background: rgba(255,255,255,0.04);  
-      backdrop-filter: blur(12px);  
-      padding: 25px 20px;  
-      display: flex;  
-      flex-direction: column;  
-      gap: 20px;  
-      position: fixed;  
-      top: 0;  
-      left: 0;  
-      height: 100vh;  
-      z-index: 1001;  
-      transform: translateX(0);  
-      transition: transform var(--transition);  
-      box-shadow: 2px 0 30px rgba(0,0,0,0.4);  
-    }  
-    .sidebar.closed {  
-      transform: translateX(-100%);  
-    }  
-    .brand {  
-      display: flex;  
-      align-items: center;  
-      gap: 12px;  
-    }  
-    .brand img {  
-      width: 42px;  
-    }  
-    .brand-text h2 {  
-      margin: 0;  
-      font-size: 20px;  
-      font-weight: 700;  
-      line-height: 1;  
-    }  
-    .brand-text span {  
-      font-size: 12px;  
-      color: #a0b0d0;  
-    }  
-   .menu {  
-  display: flex;  
-  flex-direction: column;  
-  gap: 8px;  
-  flex:1; 
-  margin-top:5px;
-}  
-    .menu a {  
-      padding: 12px 16px;  
-      border-radius: 10px;  
-      text-decoration: none;  
-      color: inherit;  
-      font-weight: 500;  
-      transition: background .25s;  
-      display: block;  
-    }  
-    .menu a.active,  
-    .menu a:hover {  
-      background: rgba(255,255,255,0.1);  
-    }  
-    .menu a.logout {  
-      margin-top: auto;  
-      background: rgba(255,80,80,0.1);  
-      color: #ffaaaa;  
-    } 
-.sidebar-toggle {  
-  display: none;  
-  position: fixed;  
-  top: 15px;  
-  left: 15px;  
-  background: linear-gradient(135deg,#00d2ff,#007bff);  
-  padding: 10px 14px;  
-  border-radius: 8px;  
-  color: #fff;  
-  font-size: 22px;  
-  cursor: pointer;  
-  z-index: 1100;  
-  border: none;  
-  transition: opacity .25s ease;  
-}  
-.sidebar-toggle.hidden {  
-  opacity: 0;  
-  pointer-events: none;  
-}  
-.backdrop {  
-  position: fixed;  
-  inset:0;  
-  background: rgba(0,0,0,0.35);  
-  backdrop-filter: blur(2px);  
-  z-index:1000;  
-  opacity:0;  
-  pointer-events:none;  
-  transition: opacity .25s ease;  
-}  
-.backdrop.visible {  
-  opacity:1;  
-  pointer-events:auto;  
-}  
+  /* Layout */
+  .dashboard-wrapper{display:flex;min-height:100vh;overflow:hidden}
+  .sidebar{
+    width:250px;
+    background:var(--surface);
+    backdrop-filter: blur(8px);
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    position:fixed;
+    left:0;top:0;bottom:0;
+    box-shadow: 2px 0 30px rgba(0,0,0,0.3);
+    transition: transform var(--transition);
+  }
+  .sidebar.closed{ transform: translateX(-110%) }
+  .brand{display:flex;gap:12px;align-items:center}
+  .brand img{width:44px;height:44px}
+  .brand-text h2{ overflow:hidden; transition: opacity .2s;color: auto;}
+  .brand-text span{font-size:12px;color:var(--muted)}
 
-.main-content {  
-  flex:1;  
-  margin-left:260px;  
-  padding:30px 35px;  
-  transition: margin .3s ease;  
-  max-width: 100%;  
-}  
-h1 {  
-  font-size:28px;  
-  margin-bottom:20px;  
-}  
-
-.settings-section {  
-  background: rgba(255,255,255,0.05);  
-  padding: 25px 25px 20px;  
-  border-radius: 12px;  
-  margin-bottom: 20px;  
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);  
-}  
-.settings-section h2 {  
-  font-size:20px;  
-  margin-bottom:14px;  
-  border-bottom:1px solid rgba(255,255,255,0.1);  
-  padding-bottom:6px;  
-}  
-.form-group {  
-  margin-bottom:18px;  
-}  
-label {  
-  display:block;  
-  margin-bottom:6px;  
-  font-weight:600;  
-  color: #b0c4f5;  
-}  
-input[type="text"],  
-input[type="email"],  
-input[type="password"] {  
-  width:100%;  
-  padding:12px 14px;  
-  border-radius:8px;  
-  border:none;  
-  font-size:14px;  
-  outline:none;  
-  background: rgba(255,255,255,0.9);  
-  color: #1f2d45;  
-  transition: box-shadow .2s;  
-}  
-input[type="checkbox"] {  
-  margin-right:8px;  
-  accent-color: #007bff;  
-}  
-.flex-row {  
-  display:flex;  
-  gap:20px;  
-  flex-wrap:wrap;  
-}  
-.small {  
-  font-size:13px;  
-  color:#d0dffb;  
-  margin-top:4px;  
-}  
-.save-btn {  
-  margin-top: 10px;  
-  padding: 14px 26px;  
-  background: linear-gradient(135deg,#007bff,#00d2ff);  
-  border: none;  
-  border-radius: 10px;  
-  color: #fff;  
-  font-weight: 600;  
-  cursor: pointer;  
-  box-shadow: 0 15px 35px -5px rgba(0,123,255,0.4);  
-  transition: transform .2s;  
-}  
-.save-btn:hover {  
-  transform: translateY(-1px);  
-}  
-
-.toggle-wrapper {  
-  display:flex;  
-  align-items:center;  
-  gap:10px;  
-}  
-.theme-label {  
-  margin-left: 8px;  
-  font-size:14px;  
-}  
-
-/* Responsive */  
-@media (max-width: 1024px) {  
-  .main-content {  
-    margin-left:0;  
-    padding:20px 20px 40px;  
-  }  
-  .sidebar-toggle {  
-    display:block;  
-  }  
-}  
-@media (max-width: 800px) {  
-  .flex-row {  
-    flex-direction:column;  
-  }  
-}
-.switch {
-  position: relative;
-  width: 48px;
-  height: 24px;
-  -webkit-appearance: none;
-  background: #c6c6c6;
-  outline: none;
-  border-radius: 20px;
-  transition: background 0.3s;
-  cursor: pointer;
-}
-.switch:checked {
+  .menu{display:flex;flex-direction:column;gap:6px;flex:1;margin-top:6px}
+  .menu a{
+    text-decoration:none;color:inherit;padding:10px 12px;border-radius:30px;font-weight:500;display:inline-block;
+    transition: background var(--transition), color var(--transition);
+  }
+    .menu a.active,
+.menu a:hover {
   background: #007bff;
-}
-.switch::before {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  background: #fff;
-  transition: transform 0.3s;
-}
-.switch:checked::before {
-  transform: translateX(24px);
-}
-.switch {
-  background: #c6c6c6;
+  color: #fff;
+  border-radius: 30px;
 }
 
-[data-theme="light"] .switch {
-  background: #ccc;
-}
+  .menu a.logout{ margin-top:auto; background: rgba(255,80,80,0.08); color:#ffb6b6; border-radius:30px; padding:10px 12px }
 
-[data-theme="dark"] .switch {
-  background: #4c4c4c;
-}
-.switch:checked {
-  background: #007bff;
-}
-.switch {
-  -webkit-appearance: none;
-  appearance: none;
-}
-.toast {
-  position: fixed;
-  top: 20px;
-  right: 30px;
-  background: linear-gradient(135deg,#007bff,#00d2ff);
-  color: #fff;
-  padding: 14px 22px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  z-index: 9999;
-}
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-.loader-screen {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(15, 30, 63, 0.95);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-}
-.loader-screen.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-.loader-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.logo-wrapper {
-  position: relative;
-  width: 300px;
-  height: 195px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.logo-wrapper .loader-logo {
-  position: absolute;
-  width: 80px;
-  z-index: 2;
-  animation: pop 0.8s ease-out;
-}
-.logo-wrapper .ekg {
-  width: 100%;
-  height: auto;
-  z-index: 1;
-}
-.loader-screen p {
-  margin-top: 20px;
-  font-size: 18px;
-  color: #fff;
-  letter-spacing: 0.5px;
-}
-@keyframes pop {
-  0% { transform: scale(0.5); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-@keyframes drawHeartbeat {
-  0% { stroke-dashoffset: 750; opacity: 0.3; }
-  70% { stroke-dashoffset: 0; opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 0; }
-}
-.heartbeat-path {
-  animation: drawHeartbeat 1.5s infinite ease-out forwards;
-}
-  </style>  
-</head>  
+  .main{
+    margin-left:250px;
+    flex:1;
+    padding:28px;
+    transition: margin var(--transition);
+    color:black;
+  }
+  .sidebar-toggle{
+    display:none; position:fixed; top:14px; left:14px; z-index:1200;
+    border:none;background:var(--accent);color:#fff;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:18px;
+  }
+
+  h1{font-size:26px;margin-bottom:18px;color:inherit}
+  .top-row{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+
+  /* Card */
+  .card{
+    background: rgba(255,255,255,0.03);
+    border-radius:var(--card-radius);
+    padding:18px;
+    margin-bottom:16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .card h2{font-size:18px;margin-bottom:12px;color:var(--muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.03);padding-bottom:8px}
+
+  /* Form */
+  .row{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .col{flex:1;min-width:220px}
+  .form-group{margin-bottom:12px}
+  label{display:block;font-weight:600;margin-bottom:6px;color:var(--muted);font-size:13px}
+  input[type="text"], input[type="email"], input[type="password"], select, input[type="number"]{
+    width:100%;padding:10px 12px;border-radius:10px;border:none;background: #fff;color:#1f2d45;font-size:14px;
+    outline: none; box-shadow: 0 1px 0 rgba(0,0,0,0.04) inset;
+  }
+  [data-theme="dark"] input[type="text"], [data-theme="dark"] input[type="email"], [data-theme="dark"] input[type="password"], [data-theme="dark"] select, [data-theme="dark"] input[type="number"]{
+    background: rgba(255,255,255,0.06); color: #e8edf7;
+  }
+  .hint{font-size:13px;color:var(--muted);margin-top:6px}
+
+  /* Avatar */
+  .avatar-row{display:flex;gap:14px;align-items:center}
+  .avatar{
+    width:84px;height:84px;border-radius:30px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px dashed rgba(255,255,255,0.04);cursor:pointer;
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover}
+
+  /* switches */
+  .switch {
+    position: relative;
+    width:44px;height:24px;border-radius:20px;background:#c6c6c6;border:none;cursor:pointer;
+    -webkit-appearance:none; appearance:none;
+  }
+  .switch:before{
+    content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;left:2px;top:2px;transition:transform .22s;
+  }
+  .switch:checked{ background:var(--accent) }
+  .switch:checked:before{ transform: translateX(20px) }
+
+  /* small controls layout */
+  .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+  /* action area */
+  .actions{display:flex;gap:12px;align-items:center;margin-top:8px}
+  .btn{padding:10px 14px;border-radius:30px;border:none;cursor:pointer;font-weight:600}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
+  .danger{background: #ff5c5c; color:#fff}
+
+  /* Accent color preview */
+  .color-pill{width:36px;height:36px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);}
+
+  /* toast */
+  .toast{position:fixed;top:20px;right:20px;background:var(--accent);color:#fff;padding:12px 16px;border-radius:10px;box-shadow: 0 12px 30px rgba(0,0,0,0.25);opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity .28s, transform .28s}
+  .toast.show{opacity:1;transform:translateY(0);pointer-events:auto}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:2000}
+  .modal-backdrop.show{display:flex}
+  .modal{
+    width:100%;max-width:520px;background:var(--surface);border-radius:12px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    transform:translateY(-6px);transition:transform .18s, opacity .18s;
+  }
+  .modal h3{margin-bottom:8px}
+  .modal p{color:var(--muted);margin-bottom:12px}
+
+  /* loader */
+  .loader-screen{position:fixed;inset:0;background:rgba(15,30,63,0.95);display:flex;align-items:center;justify-content:center;z-index:3000;opacity:1;transition:opacity .35s}
+  .loader-screen.hidden{opacity:0;pointer-events:none;display:none}
+
+  /* responsive */
+  @media (max-width: 1024px){
+    .sidebar{position:fixed;z-index:1100}
+    .sidebar-toggle{display:block; border-radius: 30px;}
+    .main{margin-left:0;padding:18px}
+  }
+  @media (max-width:640px){
+    .row{flex-direction:column}
+    .avatar{width:72px;height:72px}
+  }
+</style>
+</head>
 <body data-theme="dark">
-<div id="loader" class="loader-screen active">
-  <div class="loader-content">
-    <div class="logo-wrapper">
-      <img src="hospital-svgrepo-com.svg" alt="Loading logo" class="loader-logo">
-      <svg class="ekg ekg--original" viewBox="0 0 300 195" preserveAspectRatio="xMinYMin">
-        <g transform="translate(-0.13703948,-768.38124)">
-          <path
-            stroke="#2eec71"
-            stroke-dasharray="750"
-            stroke-dashoffset="750"
-            d="m 2.8096902,901.62064 27.8352018,0 29.835201,0 c 9.945067,0 32.20852,-29.26009 43.835197,0 l 15.8352,0 13.39911,23.5426 16.58744,-153.5426 19.3139,188.52018 16.07175,-58.52018 28.48543,0 c 9.15882,-23.20628 26.67189,-23.20628 34.48542,0 l 22.48542,0 26.48543,0"
-            style="fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-            class="heartbeat-path" />
-        </g>
-      </svg>
+  <!-- Loader -->
+  <div id="loader" class="loader-screen">
+    <div style="text-align:center;color:#fff">
+      <img src="hospital-svgrepo-com.svg" alt="logo" style="width:84px;margin-bottom:12px;"/>
+      <div style="font-weight:600;font-size:18px">Patient Management System</div>
     </div>
-    <p>Patient Management System</p>
   </div>
-</div>  
-  <div class="dashboard-wrapper">  
-    <div class="backdrop" id="backdrop"></div>  
-    <button class="sidebar-toggle" id="toggleBtn" aria-label="Toggle sidebar">☰</button>  <div class="sidebar closed" id="sidebar">  
-  <div class="brand">  
-    <img src="hospital-svgrepo-com.svg" alt="Logo">  
-    <div class="brand-text">  
-      <h2>PatientSys</h2>  
-      <span>Dashboard</span>  
-    </div>  
-  </div>  
-  <nav class="menu">  
-    <a href="dashboard.html">Home</a>  
-    <a href="add_patient.html">Add Patient</a>  
-    <a href="view_patients.html">View Patients</a>  
-    <a href="discharge.html" class="tooltip" data-tooltip="Discharge Patients"><span class="label">Discharge Patients</span></a>
-    <a href="settings.html" class="active">Settings</a>  
-    <a href="index.html" class="logout">Logout</a>  
-  </nav>  
-</div>  
 
-<main class="main-content">  
-  <h1>Settings</h1>  
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar closed" aria-label="Main navigation">
+      <div class="brand">
+        <img src="hospital-svgrepo-com.svg" alt="logo">
+        <div class="brand-text">
+          <h2>PatientSys</h2>
+          <span>Dashboard</span>
+        </div>
+      </div>
 
-  <div class="settings-section">  
-    <h2>Profile</h2>  
-    <div class="form-group">  
-      <label for="username">Username</label>  
-      <input type="text" id="username" placeholder="Your name">  
-    </div>  
-    <div class="form-group">  
-      <label for="email">Email</label>  
-      <input type="email" id="email" placeholder="your@email.com">  
-    </div>  
-  </div>  
+      <nav class="menu" role="navigation" aria-label="Sidebar menu">
+        <a href="dashboard.html">Home</a>
+        <a href="add_patient.html">Add Patient</a>
+        <a href="view_patients.html">View Patients</a>
+        <a href="discharge.html">Discharge Patients</a>
+        <a href="settings.html" class="active">Settings</a>
+        <a href="index.html" class="logout">Logout</a>
+      </nav>
+    </aside>
 
-  <div class="settings-section">  
-    <h2>Security</h2>  
-    <div class="form-group">  
-      <label for="password">Change Password</label>  
-      <input type="password" id="password" placeholder="New password">  
-    </div>  
-  </div>  
+    <button id="toggleBtn" class="sidebar-toggle" aria-expanded="false" aria-controls="sidebar">☰</button>
 
-  <div class="settings-section">  
-    <h2>Preferences</h2>  
-    <div class="flex-row">  
-      <div class="form-group" style="flex:1;">  
-      <div class="toggle-wrapper">
-  <input type="checkbox" id="darkMode" class="switch">
-  <label for="darkMode" class="theme-label">Dark Mode</label>
-</div>
-        <div class="small">Switch between light and dark appearance.</div>  
-      </div>  
-      <div class="form-group" style="flex:1;">  
-        <label>  
-          <input type="checkbox" id="notifications"> Enable Notifications  
-        </label>  
-        <div class="small">Receive system alerts and updates.</div>  
-      </div>  
-    </div>  
-  </div>  
+    <!-- Main content -->
+    <main class="main" id="mainContent">
+      <div class="top-row">
+        <h1>Settings</h1>
+        <div style="display:flex;gap:12px;align-items:center">
+          <button id="openAbout" class="btn ghost">About</button>
+          <button id="deleteAccount" class="btn danger">Delete Account</button>
+        </div>
+      </div>
 
-  <button class="save-btn" id="saveBtn">Save Changes</button>  
-</main>
+      <!-- General -->
+      <section class="card" aria-labelledby="general-heading">
+        <h2 id="general-heading">General</h2>
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="username">Full name</label>
+              <input id="username" type="text" placeholder="Your full name" />
+            </div>
+            <div class="form-group">
+              <label for="email">Email address</label>
+              <input id="email" type="email" placeholder="you@example.com" />
+            </div>
+            <div class="form-group">
+              <label for="language">Language</label>
+              <select id="language">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="pt">Português</option>
+              </select>
+              <div class="hint">Select your preferred language for the interface.</div>
+            </div>
+          </div>
 
+          <div class="col" style="max-width:320px">
+            <label style="font-weight:600;color:var(--muted);margin-bottom:8px;display:block">Profile picture</label>
+            <div class="avatar-row">
+              <div id="avatar" class="avatar" title="Click to upload avatar" role="button" tabindex="0" aria-label="Upload profile picture">
+                <img id="avatarImg" src="" alt="avatar" style="display:none" />
+                <div id="avatarPlaceholder" style="color:var(--muted);font-size:12px;text-align:center;padding:6px">Click to upload</div>
+              </div>
+              <div style="flex:1">
+                <input id="avatarInput" type="file" accept="image/*" style="display:none" />
+                <div class="hint">PNG or JPG. Max 2MB recommended. Stored locally in browser.</div>
+                <div class="actions">
+                  <button id="removeAvatar" class="btn ghost" type="button">Remove</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="card" aria-labelledby="security-heading">
+        <h2 id="security-heading">Security</h2>
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="password">Change password</label>
+              <input id="password" type="password" placeholder="New password" />
+              <div class="hint">Leave blank to keep current password. Password changes here are local demo only.</div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="form-group">
+              <label for="sessionTimeout">Session timeout (minutes)</label>
+              <input id="sessionTimeout" type="number" min="1" max="1440" placeholder="30" />
+              <div class="hint">After this period of inactivity the app should sign out (frontend demo).</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="card" aria-labelledby="prefs-heading">
+        <h2 id="prefs-heading">Preferences</h2>
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label>Theme</label>
+              <div class="controls" style="align-items:center">
+                <label style="display:flex;gap:8px;align-items:center">
+                  <input id="darkMode" type="checkbox" class="switch" />
+                  <span style="font-weight:600;color:var(--muted);margin-left:8px">Dark Mode</span>
+                </label>
+                <div style="width:12px"></div>
+                <label style="display:flex;gap:8px;align-items:center">
+                  <input id="compactMode" type="checkbox" class="switch" />
+                  <span style="font-weight:600;color:var(--muted);margin-left:8px">Compact UI</span>
+                </label>
+              </div>
+              <div class="hint">Toggle dark theme or compact layout.</div>
+            </div>
+
+          </div>
+
+          <div class="col">
+            <div class="form-group">
+              <label>Notifications</label>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <label style="display:flex;align-items:center;gap:10px">
+                  <input id="notifEnabled" type="checkbox" class="switch" />
+                  <span style="font-weight:600;color:var(--muted)">Enable notifications</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:10px">
+                  <input id="notifEmail" type="checkbox" class="switch" />
+                  <span style="font-weight:600;color:var(--muted)">Email alerts</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:10px">
+                  <input id="notifSMS" type="checkbox" class="switch" />
+                  <span style="font-weight:600;color:var(--muted)">SMS alerts</span>
+                </label>
+                <div class="hint">Control which channels you receive alerts on.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:6px">
+        <button id="saveBtn" class="btn primary">Save Changes</button>
+        <button id="resetBtn" class="btn ghost">Reset to saved</button>
+        <span id="saveStatus" style="color:var(--muted);font-size:13px"></span>
+      </div>
+
+    </main>
   </div>
-<div id="toast" class="toast">Settings saved successfully.
-</div>
-  <script>  
-    const sidebar = document.getElementById('sidebar');  
-    const backdrop = document.getElementById('backdrop');  
-    const toggleBtn = document.getElementById('toggleBtn');  
-  
-    function openSidebar() {  
-      sidebar.classList.remove('closed');  
-      backdrop.classList.add('visible');  
-      toggleBtn.classList.add('hidden');  
-    }  
-    function closeSidebar() {  
-      sidebar.classList.add('closed');  
-      backdrop.classList.remove('visible');  
-      toggleBtn.classList.remove('hidden');  
-    }  
-    function toggleSidebar() {  
-      if (sidebar.classList.contains('closed')) openSidebar();  
-      else closeSidebar();  
-    }  
-    toggleBtn.addEventListener('click', toggleSidebar);  
-    backdrop.addEventListener('click', closeSidebar);  
-    document.addEventListener('keydown', (e) => {  
-      if (e.key === 'Escape') closeSidebar();  
-    });  
-    function adjustInitial() {  
-      if (window.innerWidth > 1024) {  
-        sidebar.classList.remove('closed');  
-        backdrop.classList.remove('visible');  
-        toggleBtn.style.display = 'none';  
-      } else {  
-        sidebar.classList.add('closed');  
-        toggleBtn.style.display = 'block';  
-        toggleBtn.classList.remove('hidden');  
-      }  
-    }  
-    window.addEventListener('resize', adjustInitial);  
-    adjustInitial();   
-    const darkModeCheckbox = document.getElementById('darkMode');  
-    const notificationsCheckbox = document.getElementById('notifications');  
-    const saveBtn = document.getElementById('saveBtn');  
-  
-    function loadPreferences() {  
-      const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');  
-      if (prefs.darkMode) {  
-        darkModeCheckbox.checked = true;  
-        document.body.setAttribute('data-theme','dark');  
-      } else {  
-        document.body.setAttribute('data-theme','light');  
-      }  
-      if (prefs.notifications) notificationsCheckbox.checked = true;  
-      if (prefs.username) document.getElementById('username').value = prefs.username;  
-      if (prefs.email) document.getElementById('email').value = prefs.email;  
-    }  
-  
-    function saveSettings() {  
-      const prefs = {  
-        darkMode: darkModeCheckbox.checked,  
-        notifications: notificationsCheckbox.checked,  
-        username: document.getElementById('username').value.trim(),  
-        email: document.getElementById('email').value.trim()  
-      };  
-      localStorage.setItem('settingsPrefs', JSON.stringify(prefs));  
-      document.body.setAttribute('data-theme', prefs.darkMode ? 'dark' : 'light');  
-      showToast("Settings saved successfully."); 
-    }  
-function showToast(message) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="aboutModalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <button id="closeAbout" class="btn ghost" style="float:right">Close</button>
+      <h3 id="aboutTitle">About PatientSys</h3>
+      <p>PatientSys is a lightweight patient management demo interface. This settings panel stores preferences locally in your browser. For production, persist settings on the server and secure sensitive actions.</p>
+      <p style="font-size:13px;color:var(--muted)">Version: 1.0 — Local demo</p>
+    </div>
+  </div>
+  <div id="deleteModalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+      <h3 id="deleteTitle">Delete your account?</h3>
+      <p>Deleting the account will remove all locally stored preferences and avatar from this browser. This is irreversible for local data.</p>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:12px">
+        <button id="cancelDelete" class="btn ghost">Cancel</button>
+        <button id="confirmDelete" class="btn danger">Delete</button>
+      </div>
+    </div>
+  </div>
 
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
-}
-darkModeCheckbox.addEventListener('change', () => {
-  const isDark = darkModeCheckbox.checked;
-  document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-
-  const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');
-  prefs.darkMode = isDark;
-  localStorage.setItem('settingsPrefs', JSON.stringify(prefs));
-});  
-notificationsCheckbox.addEventListener('change', () => {
-  const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{}');
-  prefs.notifications = notificationsCheckbox.checked;
-  localStorage.setItem('settingsPrefs', JSON.stringify(prefs));
-});
-    saveBtn.addEventListener('click', saveSettings);  
-  
-    loadPreferences();  
-  </script> 
 <script>
-  window.addEventListener("load", () => {
-    const loader = document.getElementById("loader");
-    setTimeout(() => {
-      loader.classList.remove("active");
-      setTimeout(() => { loader.style.display = "none"; }, 500);
-    }, 2000);
-  });
+const sidebar = document.getElementById('sidebar');
+const toggleBtn = document.getElementById('toggleBtn');
+const loader = document.getElementById('loader');
+const toastEl = document.getElementById('toast');
+const saveStatus = document.getElementById('saveStatus');
+
+const avatar = document.getElementById('avatar');
+const avatarInput = document.getElementById('avatarInput');
+const avatarImg = document.getElementById('avatarImg');
+const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+const removeAvatarBtn = document.getElementById('removeAvatar');
+
+const usernameInput = document.getElementById('username');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const languageSelect = document.getElementById('language');
+const sessionTimeout = document.getElementById('sessionTimeout');
+
+const darkModeToggle = document.getElementById('darkMode');
+const compactToggle = document.getElementById('compactMode');
+
+const notifEnabled = document.getElementById('notifEnabled');
+const notifEmail = document.getElementById('notifEmail');
+const notifSMS = document.getElementById('notifSMS');
+
+const saveBtn = document.getElementById('saveBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+const aboutModalBackdrop = document.getElementById('aboutModalBackdrop');
+const openAboutBtn = document.getElementById('openAbout');
+const closeAboutBtn = document.getElementById('closeAbout');
+
+const deleteModalBackdrop = document.getElementById('deleteModalBackdrop');
+const deleteAccountBtn = document.getElementById('deleteAccount');
+const cancelDeleteBtn = document.getElementById('cancelDelete');
+const confirmDeleteBtn = document.getElementById('confirmDelete');
+function showToast(msg, ms = 3000){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  setTimeout(()=> toastEl.classList.remove('show'), ms);
+}
+
+function saveToStorage(key, value){ localStorage.setItem(key, JSON.stringify(value)) }
+function loadFromStorage(key){ try { return JSON.parse(localStorage.getItem(key)) } catch(e){ return null } }
+const DEFAULT_PREFS = {
+  username: '',
+  email: '',
+  darkMode: true,
+  compactMode: false,
+  language: 'en',
+  notifications: {
+    enabled: true,
+    email: true,
+    sms: false
+  },
+  sessionTimeout: 30,
+  avatarDataUrl: null
+};
+
+function applyTheme(dark){
+  document.body.setAttribute('data-theme', dark ? 'dark' : 'light');
+}
+
+function applyCompact(compact){
+  if(compact){
+    document.documentElement.style.setProperty('--card-radius','10px');
+    document.documentElement.style.setProperty('--container-gap','12px');
+  } else {
+    document.documentElement.style.setProperty('--card-radius','14px');
+    document.documentElement.style.setProperty('--container-gap','20px');
+  }
+}
+
+function renderAvatar(dataUrl){
+  if(!dataUrl){
+    avatarImg.style.display = 'none';
+    avatarPlaceholder.style.display = 'block';
+    avatarImg.src = '';
+  } else {
+    avatarImg.src = dataUrl;
+    avatarImg.style.display = 'block';
+    avatarPlaceholder.style.display = 'none';
+  }
+}
+
+function loadPreferences(){
+  const prefs = loadFromStorage('settingsPrefs') || DEFAULT_PREFS;
+  usernameInput.value = prefs.username || '';
+  emailInput.value = prefs.email || '';
+  languageSelect.value = prefs.language || 'en';
+  darkModeToggle.checked = !!prefs.darkMode;
+  compactToggle.checked = !!prefs.compactMode;
+  notifEnabled.checked = !!(prefs.notifications && prefs.notifications.enabled);
+  notifEmail.checked = !!(prefs.notifications && prefs.notifications.email);
+  notifSMS.checked = !!(prefs.notifications && prefs.notifications.sms);
+  sessionTimeout.value = prefs.sessionTimeout || DEFAULT_PREFS.sessionTimeout;
+  applyTheme(prefs.darkMode);
+  applyCompact(prefs.compactMode);
+  renderAvatar(prefs.avatarDataUrl || null);
+  passwordInput.value = '';
+  saveStatus.textContent = '';
+}
+
+function collectPreferences(){
+  return {
+    username: usernameInput.value.trim(),
+    email: emailInput.value.trim(),
+    darkMode: !!darkModeToggle.checked,
+    compactMode: !!compactToggle.checked,
+    language: languageSelect.value || DEFAULT_PREFS.language,
+    notifications: {
+      enabled: !!notifEnabled.checked,
+      email: !!notifEmail.checked,
+      sms: !!notifSMS.checked
+    },
+    sessionTimeout: Number(sessionTimeout.value) > 0 ? Number(sessionTimeout.value) : DEFAULT_PREFS.sessionTimeout,
+    avatarDataUrl: loadFromStorage('settingsPrefs')?.avatarDataUrl || null 
+  };
+}
+function saveSettings(){
+  const prefs = collectPreferences();
+
+  if(isNaN(prefs.sessionTimeout) || prefs.sessionTimeout < 1 || prefs.sessionTimeout > 1440){
+    showToast('Session timeout must be between 1 and 1440 minutes');
+    return;
+  }
+  const currentStored = loadFromStorage('settingsPrefs') || {};
+  prefs.avatarDataUrl = currentStored.avatarDataUrl || null;
+  saveToStorage('settingsPrefs', prefs);
+  applyAccent(prefs.accent);
+  applyTheme(prefs.darkMode);
+  applyCompact(prefs.compactMode);
+  showToast('Settings saved');
+  saveStatus.textContent = 'Saved just now';
+  setTimeout(()=> saveStatus.textContent = '', 2500);
+}
+
+function resetToSaved(){
+  loadPreferences();
+  showToast('Reset to saved preferences');
+}
+function handleAvatarFile(file){
+  if(!file) return;
+  if(file.size > 5_000_000){
+    showToast('Image too big — choose under 5MB');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const dataUrl = e.target.result;
+    renderAvatar(dataUrl);
+    const prefs = loadFromStorage('settingsPrefs') || DEFAULT_PREFS;
+    prefs.avatarDataUrl = dataUrl;
+    saveToStorage('settingsPrefs', prefs);
+    showToast('Avatar updated');
+  };
+  reader.readAsDataURL(file);
+}
+
+avatar.addEventListener('click', ()=> avatarInput.click());
+avatar.addEventListener('keydown', (e)=> { if(e.key === 'Enter' || e.key === ' ') avatarInput.click() });
+avatarInput.addEventListener('change', (e)=> handleAvatarFile(e.target.files && e.target.files[0]));
+removeAvatarBtn.addEventListener('click', ()=>{
+  const prefs = loadFromStorage('settingsPrefs') || DEFAULT_PREFS;
+  prefs.avatarDataUrl = null;
+  saveToStorage('settingsPrefs', prefs);
+  renderAvatar(null);
+  showToast('Avatar removed');
+});
+
+darkModeToggle.addEventListener('change', (e) => {
+  applyTheme(e.target.checked);
+});
+compactToggle.addEventListener('change', (e) => {
+  applyCompact(e.target.checked);
+});
+notifEnabled.addEventListener('change', ()=> {
+  if(!notifEnabled.checked){
+    notifEmail.checked = false;
+    notifSMS.checked = false;
+  }
+});
+saveBtn.addEventListener('click', saveSettings);
+resetBtn.addEventListener('click', resetToSaved);
+function openSidebar(){ sidebar.classList.remove('closed'); toggleBtn.setAttribute('aria-expanded','true') }
+function closeSidebar(){ sidebar.classList.add('closed'); toggleBtn.setAttribute('aria-expanded','false') }
+toggleBtn.addEventListener('click', ()=> { sidebar.classList.toggle('closed'); toggleBtn.setAttribute('aria-expanded', String(!sidebar.classList.contains('closed'))) });
+
+function adjustSidebarOnResize(){
+  if(window.innerWidth > 1024){
+    openSidebar();
+    toggleBtn.style.display = 'none';
+  } else {
+    closeSidebar();
+    toggleBtn.style.display = 'block';
+  }
+}
+window.addEventListener('resize', adjustSidebarOnResize);
+openAboutBtn.addEventListener('click', ()=> { aboutModalBackdrop.classList.add('show') });
+closeAboutBtn.addEventListener('click', ()=> { aboutModalBackdrop.classList.remove('show') });
+aboutModalBackdrop.addEventListener('click', (e)=> { if(e.target === aboutModalBackdrop) aboutModalBackdrop.classList.remove('show') });
+deleteAccountBtn.addEventListener('click', ()=> deleteModalBackdrop.classList.add('show'));
+cancelDeleteBtn.addEventListener('click', ()=> deleteModalBackdrop.classList.remove('show'));
+deleteModalBackdrop.addEventListener('click', (e)=> { if(e.target === deleteModalBackdrop) deleteModalBackdrop.classList.remove('show') });
+confirmDeleteBtn.addEventListener('click', ()=>{
+  localStorage.removeItem('settingsPrefs');
+  renderAvatar(null);
+  loadPreferences();
+  deleteModalBackdrop.classList.remove('show');
+  showToast('All local settings removed');
+});
+window.addEventListener('load', ()=> {
+  setTimeout(()=> {
+    loader.classList.add('hidden');
+    adjustSidebarOnResize();
+    loadPreferences();
+  }, 600);
+});
+document.addEventListener('keydown', (e)=> {
+  if(e.key === 'Escape'){
+    aboutModalBackdrop.classList.remove('show');
+    deleteModalBackdrop.classList.remove('show');
+    if(window.innerWidth <= 1024) closeSidebar();
+  }
+});
+darkModeToggle.addEventListener('change', ()=> {
+  const prefs = loadFromStorage('settingsPrefs') || DEFAULT_PREFS;
+  prefs.darkMode = darkModeToggle.checked;
+  saveToStorage('settingsPrefs', prefs);
+});
+languageSelect.addEventListener('change', ()=> {
+  const prefs = loadFromStorage('settingsPrefs') || DEFAULT_PREFS;
+  prefs.language = languageSelect.value;
+  saveToStorage('settingsPrefs', prefs);
+});
+
+
+setTimeout(()=> showToast('Preferences loaded'), 700);
+
+notifEnabled.addEventListener('change', ()=> {
+  if(!notifEnabled.checked){
+    notifEmail.checked = false;
+    notifSMS.checked = false;
+    notifEmail.disabled = true;
+    notifSMS.disabled = true;
+  } else {
+    notifEmail.disabled = false;
+    notifSMS.disabled = false;
+  }
+});
+if(!loadFromStorage('settingsPrefs')){
+  saveToStorage('settingsPrefs', DEFAULT_PREFS);
+}
 </script>
-  </body>  
-</html>  
+</body>
+</html>
