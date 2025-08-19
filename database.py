@@ -1,4 +1,5 @@
 from sqlmodel import SQLModel, Field, create_engine, Session, select,text
+from sqlalchemy.exc import IntegrityError
 import uuid
 import os
 from dotenv import load_dotenv
@@ -56,15 +57,16 @@ class DBApi:
             return False
 
     def add_patient(self,doctor: str, name: str, age:int, condition: str, contact: str, note: str | None, gender: int):
-        try:
-            new_patient = self.patient_table(name=name, age=age, condition=condition, contact=contact, note=note, gender=gender, doctor=doctor)
-            with Session(self.engine) as session:
+        new_patient = self.patient_table(name=name, age=age, condition=condition, contact=contact, note=note, gender=gender, doctor=doctor)
+        with Session(self.engine) as session:
+            try:
                 session.add(new_patient)
                 session.commit()
                 session.refresh(new_patient)
-        except Exception as err:
-            print(err)
-            return False
+            except Exception as err:
+                print(err)
+                session.rollback()
+                return False
         return True
     
     def get_patients(self, doctor: str):
