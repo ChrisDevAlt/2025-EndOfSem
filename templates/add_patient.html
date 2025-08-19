@@ -382,6 +382,7 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+      event.currentTarget.disabled = true
       const data = Object.fromEntries(new FormData(form).entries());
       if (!data.name || !data.age || !data.gender || !data.phone || !data.condition) {
         alert('Please fill out all required fields.');
@@ -410,6 +411,7 @@
         return response.json()
       }).then((data)=>{
         if (data.success === true) {
+          this.disabled = true
           location.href = "/view_patients"
         }
       })

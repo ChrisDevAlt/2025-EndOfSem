@@ -1,5 +1,4 @@
 from sqlmodel import SQLModel, Field, create_engine, Session, select,text
-from sqlalchemy.exc import IntegrityError
 import uuid
 import os
 from dotenv import load_dotenv
@@ -8,7 +7,7 @@ load_dotenv()
 
 class Patient(SQLModel, table=True):
     __tablename__="patients"
-    id: str = Field(default=uuid.uuid4().__str__(),primary_key=True, index=True)
+    id: str = Field(primary_key=True, index=True)
     name: str
     age: int
     gender: int
@@ -57,7 +56,7 @@ class DBApi:
             return False
 
     def add_patient(self,doctor: str, name: str, age:int, condition: str, contact: str, note: str | None, gender: int):
-        new_patient = self.patient_table(name=name, age=age, condition=condition, contact=contact, note=note, gender=gender, doctor=doctor)
+        new_patient = self.patient_table(id=uuid.uuid4().__str__(),name=name, age=age, condition=condition, contact=contact, note=note, gender=gender, doctor=doctor)
         with Session(self.engine) as session:
             try:
                 session.add(new_patient)
