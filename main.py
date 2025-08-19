@@ -39,7 +39,7 @@ async def dashboard(request: Request, commonDep: dict = Depends(check_session)):
     patients = db.get_patients(commonDep["id"])
     doctor = db.get_doctor(id=commonDep["id"], email=None)
     mostRecent = patients[:6:-1] if len(patients) >= 7 else patients[::-1]
-    return templates.TemplateResponse(request=request, name="dashboard.html", context={"username": doctor.name, "total_patients":len(patients), "recentPatients":mostRecent})
+    return templates.TemplateResponse(request=request, name="dashboard.html", context={"username": doctor.name, "total_patients":len(patients), "recentPatients":mostRecent if mostRecent else []})
 
 
 @app.get("/view_patients", response_class=HTMLResponse)
