@@ -1,18 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <script>
-(function() {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) {
-    document.documentElement.classList.toggle('dark-mode', savedTheme === 'dark');
-  }
-})();
-</script>
-
   <meta charset="UTF-8" />
   <title>Add Patient | PatientSys</title>
-  <link rel="icon" type="image/svg+xml" href="hospital-svgrepo-com.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet" />
@@ -28,11 +18,9 @@
     }
     .layout { display:flex; min-height:100vh; position:relative; }
     .backdrop {
-      position:fixed;
-       inset:0;
+      position:fixed; inset:0;
       background:rgba(0,0,0,0.35);
-      display:none;
-       z-index:998;
+      display:none; z-index:998;
       transition:opacity .25s;
     }
     .toggle-btn {
@@ -42,7 +30,7 @@
       padding: 10px 14px;
       background: linear-gradient(135deg,#00d2ff,#007bff);
       color: #fff; font-size: 22px;
-      border: none; border-radius: 30px;
+      border: none; border-radius: 8px;
       cursor: pointer;
       box-shadow: 0 15px 35px rgba(0,123,255,0.4);
       transition: opacity .2s;
@@ -76,19 +64,12 @@
     .menu { display:flex; flex-direction:column; gap:8px; flex:1; margin-top:5px; }
     .menu a {
       display:flex; align-items:center; gap:10px;
-      padding:10px 14px; text-decoration:none; color:black;
+      padding:10px 14px; text-decoration:none; color:inherit;
       border-radius:8px; font-weight:500; transition:background .2s;
       white-space:nowrap; position:relative;
     }
-   .menu a.active,
-.menu a:hover {
-  background: #007bff;
-  color: #fff;
-  border-radius: 30px;
-}
-
-    .menu a.logout { margin-top:auto; background: rgba(255,80,80,0.1); color:#ffaaaa;  border-radius: 30px;
- }
+    .menu a.active, .menu a:hover { background: rgba(255,255,255,0.1); }
+    .menu a.logout { margin-top:auto; background: rgba(255,80,80,0.1); color:#ffaaaa; }
     .label { flex:1; }
     .sidebar.collapsed .label { display:none; }
     .sidebar.collapsed .menu a:hover::after{
@@ -114,7 +95,7 @@
     }
     .left-controls { display:flex; align-items:center; gap:15px; }
     .search-box input {
-      padding:12px 16px; border-radius:30px; border:none; outline:none; font-size:14px;
+      padding:12px 16px; border-radius:10px; border:none; outline:none; font-size:14px;
       background: rgba(255,255,255,0.9); color:#1f2d45; font-weight:500;
       min-width:220px; max-width:400px; width:100%;
     }
@@ -135,7 +116,7 @@
     }
     .form-container {
       background: rgba(255, 255, 255, 0.05);
-      padding: 30px; border-radius: 80px; max-width: 700px; margin: 0 auto;
+      padding: 30px; border-radius: 12px; max-width: 700px; margin: 0 auto;
     }
     .form-container h2 { text-align:center; margin-bottom:20px; }
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
@@ -143,12 +124,12 @@
     .form-group.full { grid-column:1 / -1; }
     .form-group label { margin-bottom:6px; font-weight:600; }
     .form-group input, .form-group select, .form-group textarea {
-      padding:12px; border-radius:30px; border:none; font-size:14px;
+      padding:12px; border-radius:8px; border:none; font-size:14px;
       background: rgba(255,255,255,0.9); color:#1f2d45;
     }
     .form-actions { display:flex; justify-content:center; gap:12px; margin-top:20px; }
     .btn {
-      padding:12px 20px; border:none; border-radius:30px; cursor:pointer; font-weight:700;
+      padding:12px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:700;
       background: linear-gradient(135deg,#007bff,#00d2ff); color:#fff;
       box-shadow:0 15px 35px -5px rgba(0,123,255,0.4);
     }
@@ -171,42 +152,19 @@
     [data-theme="light"] { background:#f4f7fa; color:#1f2d45; }
     [data-theme="light"] .sidebar { background: rgba(255,255,255,0.08); }
     [data-theme="light"] .menu a.active,
-    [data-theme="light"] .menu a:hover { background:  #007bff; }
+    [data-theme="light"] .menu a:hover { background: rgba(0,0,0,0.05); }
     [data-theme="light"] .menu a.logout { background: rgba(255,80,80,0.08); color:#d9534f; }
     [data-theme="light"] .search-box input { background:#fdfdfd; color:#1f2d45; }
     [data-theme="light"] .role-badge { background: linear-gradient(135deg,#007bff,#00d2ff); color:#fff; }
     [data-theme="light"] .btn.secondary { border-color: rgba(0,0,0,0.2); color:#007bff; }
     [data-theme="light"] .form-container { background: rgba(0,0,0,0.04); }
-  .toast {
-  position: fixed;
-  top: 20px;
-  right: 30px;
-  background: linear-gradient(135deg,#007bff,#00d2ff);
-  color: #fff;
-  padding: 14px 22px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  z-index: 9999;
-}
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
   </style>
 </head>
 <body data-theme="dark">
   <div id="loader" class="loader-screen active" aria-hidden="true">
     <div class="loader-content">
       <div class="logo-wrapper">
-        <img src="hospital-svgrepo-com.svg" alt="Loading logo" class="loader-logo" />
+        <img src="./images/hospital-svgrepo-com.svg" alt="Loading logo" class="loader-logo" />
         <svg class="ekg" viewBox="0 0 300 195" preserveAspectRatio="xMinYMin" aria-hidden="true">
           <g transform="translate(-0.13703948,-768.38124)">
             <path
@@ -229,33 +187,36 @@
   <div class="layout">
     <aside class="sidebar" id="sidebar" aria-label="Primary">
       <div class="brand">
-        <img src="hospital-svgrepo-com.svg" alt="Logo" />
+        <img src="./images/hospital-svgrepo-com.svg" alt="Logo" />
         <div class="brand-text">
           <h2>PatientSys</h2>
           <span style="font-size:12px; color:#a0b0d0;"> Nurse's Workspace</span>
         </div>
       </div>
       <nav class="menu">
-        <a href="dashboard.html" class="tooltip" data-tooltip="Home"><span class="label">Home</span></a>
-        <a href="add_patient.html" class="tooltip active" data-tooltip="Add Patient"><span class="label">Add Patient</span></a>
-        <a href="view_patients.html" class="tooltip" data-tooltip="View Patients"><span class="label">View Patients</span></a>
-        <a href="discharge.html" class="tooltip" data-tooltip="Discharge Patients"><span class="label">Discharge Patients</span></a>
-        <a href="settings.html" class="tooltip" data-tooltip="Settings"><span class="label">Settings</span></a>
-        <a href="index.html" class="logout tooltip" data-tooltip="Logout"><span class="label">Logout</span></a>
+        <a href="dashboard" class="tooltip" data-tooltip="Home"><span class="label">Home</span></a>
+        <a href="add_patient" class="tooltip active" data-tooltip="Add Patient"><span class="label">Add Patient</span></a>
+        <a href="view_patients" class="tooltip" data-tooltip="View Patients"><span class="label">View Patients</span></a>
+        <a href="settings" class="tooltip" data-tooltip="Settings"><span class="label">Settings</span></a>
+        <a onclick="return logout(event)" class="logout tooltip" data-tooltip="Logout"><span class="label">Logout</span></a>
       </nav>
     </aside>
     <main class="main-content" aria-label="Main content" id="mainContent">
       <header class="topbar">
         <div class="left-controls">
+          <div class="search-box">
+            <input type="text" id="global-search" placeholder="Search patient by name or ID..." aria-label="Global search" />
+          </div>
         </div>
         <div class="user-info">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">Toggle Theme</button>
           <div class="role-badge">Nurse</div>
           <div class="avatar" title="Nurse">NS</div>
         </div>
       </header>
       <section class="form-container" aria-labelledby="addPatientTitle">
         <h2 id="addPatientTitle">Add New Patient</h2>
-        <form id="add-patient-form" novalidate>
+        <form id="add-patient-form" novalidate action="/add_patient" method="post">
           <div class="form-grid">
             <div class="form-group">
               <label for="patient-name">Full Name</label>
@@ -271,10 +232,8 @@
               <label for="patient-gender">Gender</label>
               <select id="patient-gender" name="gender" required>
                 <option value="">-- Select Gender --</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Homosexual</option>
-                <option>Other</option>
+                <option value=0>Male</option>
+                <option value=1>Female</option>
               </select>
             </div>
 
@@ -302,7 +261,7 @@
       </section>
     </main>
   </div>
-  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
   <script>
     const sidebar = document.getElementById('sidebar');
     const backdrop = document.getElementById('backdrop');
@@ -318,6 +277,15 @@
         toggleBtn.classList.add('hidden');
       }
     }
+
+    function logout(event) {
+    fetch("https://patient-management-7d2f.onrender.com//logout",{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).then(resp => resp.json())
+  }
 
     function closeSidebar() {
       if (window.innerWidth < 900) {
@@ -411,57 +379,46 @@
       return 'P' + s;
     }
 
-    function getPatients() {
-      try { return JSON.parse(localStorage.getItem('patients') || '[]'); }
-      catch { return []; }
-    }
 
-    function setPatients(arr) {
-      localStorage.setItem('patients', JSON.stringify(arr));
-    }
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(form).entries());
-  
-  // Validation
-  if (!data.name || !data.age || !data.gender || !data.phone || !data.condition) {
-    showToast('Please fill out all required fields.');
-    return;
-  }
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      if (!data.name || !data.age || !data.gender || !data.phone || !data.condition) {
+        alert('Please fill out all required fields.');
+        return;
+      }
 
-  // Create patient object
-  const patient = {
-    id: generatePatientId(),
-    name: String(data.name).trim(),
-    age: Number(data.age),
-    gender: data.gender,
-    phone: String(data.phone).trim(),
-    condition: String(data.condition).trim(),
-    notes: String(data.notes || '').trim(),
-    lastVisit: new Date().toISOString().slice(0,10)
-  };
-  const list = getPatients();
-  list.unshift(patient);
-  setPatients(list);
-  form.reset();
-  showToast(`Patient ${patient.name} saved with ID ${patient.id}.`);
-  setTimeout(() => {
-    location.href = 'view_patients.html';
-  }, 1500);
-});
+      const patient = {
+        id: generatePatientId(),
+        name: String(data.name).trim(),
+        age: Number(data.age),
+        gender: Number(data.gender),
+        phone: String(data.phone).trim(),
+        condition: String(data.condition).trim(),
+        notes: String(data.notes || '').trim(),
+        // lastVisit: new Date().toISOString().slice(0,10)
+      };
 
-    localStorage.setItem('settingsPrefs', JSON.stringify(prefs));  
-      document.body.setAttribute('data-theme', prefs.darkMode ? 'dark' : 'light');  
-      showToast(`Patient ${patient.name} saved with ID ${patient.id}.`); 
-    function showToast(message) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
+      fetch("https://patient-management-7d2f.onrender.com/add_patient", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body:JSON.stringify(patient)
+      }).then((response) => {
+        console.log(response)
+        return response.json()
+      }).then((data)=>{
+        if (data.success === true) {
+          location.href = "/view_patients"
+        }
+      })
 
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
-}
+      const list = getPatients();
+      list.unshift(patient);
+      setPatients(list);
+      location.href = "view_patients"
+    });
   </script>
 </body>
 </html>

@@ -1,18 +1,8 @@
-
-<!DOCTYPE html>  <html lang="en">  
-<head> 
-  <script>
-(function() {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) {
-    document.documentElement.classList.toggle('dark-mode', savedTheme === 'dark');
-  }
-})();
-</script>
- 
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
   <meta charset="UTF-8" />  
-  <title>View Patients | PatientSys</title> 
-  <link rel="icon" type="image/svg+xml" href="hospital-svgrepo-com.svg"> 
+  <title>View Patients | PatientSys</title>  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">  
   <style>  
@@ -72,18 +62,18 @@ width: 70px;
 display: none;
 }
 .sidebar.collapsed .menu a:hover::after {
-content:attr(data-tooltip);
-position:absolute;
-left:100%;
-top:50%;
-transform: translate(8px,-50%);
+content: attr(data-tooltip);
+position: absolute;
+left: 100%;
+top: 50%;
+transform: translate(8px, -50%);
 background: rgba(0, 0, 0, 0.85);
 color: white;
 padding: 6px 10px;
-border-radius:6px;
-font-size:12px;
-white-space:nowrap;
-z-index:2000;
+border-radius: 6px;
+font-size: 12px;
+white-space: nowrap;
+z-index: 2000;
 }
 
 .brand {  
@@ -103,37 +93,25 @@ z-index:2000;
 .menu {  
   display: flex;  
   flex-direction: column;  
-  gap: 8px;  
-  flex:1; 
-  margin-top:5px;
+  gap: 10px;  
 }  
-.menu a {    
-  display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      text-decoration:none;
-      color:black;
-      border-radius:8px;
-      font-weight:500;
-      transition:background .2s;
-      white-space:nowrap;
-      position:relative;
-}  
-.menu a.active,
-.menu a:hover {
-  background: #007bff;
-  color: #fff;
-  border-radius: 30px;
-}
 
+.menu a {  
+  text-decoration: none;  
+  color: black;  
+  padding: 10px 16px;  
+  border-radius: 10px;  
+}  
+
+.menu a.active,  
+.menu a:hover {  
+  background: rgba(255, 255, 255, 0.1);  
+}  
 
 .menu a.logout {  
   margin-top: auto;  
   background: rgba(255, 80, 80, 0.1);  
   color: #ffaaaa;  
-  border-radius: 30px;
-
 }  
 
 .main {  
@@ -183,7 +161,7 @@ max-width: 100%;
 
 .search {  
   padding: 10px 14px;  
-  border-radius: 30px;  
+  border-radius: 8px;  
   border: none;  
   font-size: 14px;  
   max-width: 300px;  
@@ -195,14 +173,13 @@ max-width: 100%;
   overflow-x: auto;  
   background: rgba(255, 255, 255, 0.03);  
   padding: 20px;  
-  border-radius: 50px;  
+  border-radius: 12px;  
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);  
 }  
 
 table {  
   width: 100%;  
-  border-collapse: collapse; 
-  border-radius: 30px; 
+  border-collapse: collapse;  
   color: #e8edf7;  
   font-size: 14px;  
 }  
@@ -211,11 +188,10 @@ thead th {
   text-align: left;  
   padding: 12px 14px;  
   background: rgba(255, 255, 255, 0.08);  
-  
 }  
 
 tbody tr:nth-child(even) {  
-  background: rgba(255, 255, 255, 0.02); 
+  background: rgba(255, 255, 255, 0.02);  
 }  
 
 .btn-view {  
@@ -250,7 +226,7 @@ tbody tr:nth-child(even) {
   left: 15px;  
   background: linear-gradient(135deg, #00d2ff, #007bff);  
   padding: 10px 14px;  
-  border-radius: 30px;  
+  border-radius: 8px;  
   color: #fff;  
   font-size: 22px;  
   cursor: pointer;  
@@ -300,7 +276,7 @@ background: rgba(255,255,255,0.08);
 
 [data-theme="light"] .menu a.active,
 [data-theme="light"] .menu a:hover {
-background: #007bff;
+background: rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="light"] .menu a.logout {
@@ -427,7 +403,7 @@ transform: translateX(0);
 <div id="loader" class="loader-screen active">
   <div class="loader-content">
     <div class="logo-wrapper">
-      <img src="hospital-svgrepo-com.svg" alt="Loading logo" class="loader-logo">
+      <img src="./images/hospital-svgrepo-com.svg" alt="Loading logo" class="loader-logo">
       <svg class="ekg ekg--original" viewBox="0 0 300 195" preserveAspectRatio="xMinYMin">
         <g transform="translate(-0.13703948,-768.38124)">
           <path
@@ -447,19 +423,18 @@ transform: translateX(0);
   <button aria-label="Toggle sidebar" class="toggle-btn" id="toggleBtn">☰</button>    <div class="layout">  
     <nav class="sidebar" id="sidebar">  
       <div class="brand">  
-        <img src="hospital-svgrepo-com.svg" alt="Logo">  
+        <img src="./images/hospital-svgrepo-com.svg" alt="Logo">  
         <div class="brand-text">  
           <h2 style="margin:0; font-size:18px;">PatientSys</h2>  
           <div style="font-size:12px; color:#a0b0d0;">Dashboard</div>  
         </div>  
       </div>  
       <div class="menu">  
-        <a href="dashboard.html" data-tooltip="Home" class="tooltip"><span class="label">Home</span></a>  
-        <a href="add_patient.html" data-tooltip="Add Patient" class="tooltip"><span class="label">Add Patient</span></a>  
-        <a href="view_patients.html" data-tooltip="View Patients" class="tooltip active"><span class="label">View Patients</span></a> 
-        <a href="discharge.html" class="tooltip" data-tooltip="Discharge Patients"><span class="label">Discharge Patients</span></a> 
-        <a href="settings.html" data-tooltip="Settings" class="tooltip"><span class="label">Settings</span></a>  
-        <a href="index.html" data-tooltip="Logout" class="tooltip logout"><span class="label">Logout</span></a>  
+        <a href="dashboard" data-tooltip="Home" class="tooltip"><span class="label">Home</span></a>  
+        <a href="add_patient" data-tooltip="Add Patient" class="tooltip"><span class="label">Add Patient</span></a>  
+        <a href="view_patients" data-tooltip="View Patients" class="tooltip active"><span class="label">View Patients</span></a>  
+        <a href="settings" data-tooltip="Settings" class="tooltip"><span class="label">Settings</span></a>  
+        <a onclick="return logout(event)" data-tooltip="Logout" class="tooltip logout"><span class="label">Logout</span></a>  
       </div>  
     </nav>    <main class="main" id="mainContent">  
 <div class="topbar">  
@@ -472,54 +447,88 @@ transform: translateX(0);
       <div class="table-wrapper">  
         <table aria-label="Patients table">  
           <thead>  
-            <div>
-               <tr>  
+            <tr>  
               <th>ID</th>  
               <th>Name</th>  
-              <th>Last Visit</th>  
+              <th>Gender</th>  
               <th>Condition</th>  
               <th>Phone</th>  
               <th>Action</th>  
-            </tr> 
-            </div>
+            </tr>  
           </thead>  
-          <tbody id="patientTable"></tbody>  
+          <tbody id="patientTable">
+            {% for val in patientsList %}
+              <tr>
+                <td style="padding:12px 14px;">P{{loop.index}}</td>
+                <td style="padding:12px 14px;">{{val.name}}</td> 
+                <td style="padding:12px 14px;">
+                  {% if val.gender == 0 %}
+                    Male 
+                  {% else %}
+                    Female
+                  {%endif%}
+                </td>
+                <td style="padding:12px 14px;">{{val.condition}}</td> 
+                <td style="padding:12px 14px;">{{val.phone}}</td>  
+                <td style="padding:12px 14px;"><button value="{{val.id}}" onclick="return deletePatient(event)" class="btn-view" aria-label="View {{val.name}}">Delete</button></td>  
+              </tr>
+            {% endfor %}
+          </tbody>  
         </table>  
       </div>  
     </main>  
-  </div>    <script>  
+  </div>    
+  <script>  
   const sidebar = document.getElementById('sidebar');  
   const backdrop = document.getElementById('backdrop');  
   const toggleBtn = document.getElementById('toggleBtn');  
   const mainContent = document.getElementById('mainContent');  
   const searchInput = document.getElementById('searchInput');  
   
-  const patients = [  
-    { id: 'P1001', name: 'Ama Serwaa', lastVisit: '2025-08-01', condition: 'Hypertension', phone: '+233504123456' },  
-    { id: 'P1002', name: 'Kwame Mensah', lastVisit: '2025-07-30', condition: 'Diabetes', phone: '+233507654321' },  
-    { id: 'P1003', name: 'Esi Boateng', lastVisit: '2025-07-28', condition: 'Asthma', phone: '+233505998877' },  
-    { id: 'P1004', name: 'Kojo Owusu', lastVisit: '2025-07-25', condition: 'Malaria', phone: '+233506112233' },  
-    { id: 'P1005', name: 'Adwoa Yeboah', lastVisit: '2025-07-20', condition: 'Anemia', phone: '+233509445566' }  
-  ];  
+  const patients = {{patientsList | tojson}};  
   
   let collapsed = false;  
   
   function renderTable(data) {  
     const tbody = document.getElementById('patientTable');  
     tbody.innerHTML = '';  
-    data.forEach(p => {  
+    data.forEach((p, ind) => {  
       const tr = document.createElement('tr');  
       tr.innerHTML = `  
-        <td style="padding:12px 14px;">${p.id}</td>  
+        <td style="padding:12px 14px;">P${ind+1}</td>  
         <td style="padding:12px 14px;">${p.name}</td>  
-        <td style="padding:12px 14px;">${p.lastVisit}</td>  
+        <td style="padding:12px 14px;">${p.gender}</td>  
         <td style="padding:12px 14px;">${p.condition}</td>  
         <td style="padding:12px 14px;">${p.phone}</td>  
-        <td style="padding:12px 14px;"><button class="btn-view" aria-label="View ${p.name}">View</button></td>  
+        <td style="padding:12px 14px;"><button value="${p.id}" onclick="return deletePatient(event)" class="btn-view" aria-label="View ${p.name}">Delete</button></td>  
       `;  
       tbody.appendChild(tr);  
     });  
   }  
+
+  function deletePatient(event) {
+    fetch(`https://patient-management-7d2f.onrender.com/delete_patient/${event.target.value}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(data =>{
+      if (data==false) {
+        alert("No such patient")
+      } else {
+        location.href = "/view_patients"
+      }
+    })
+  }
+
+  function logout(event) {
+    fetch("https://patient-management-7d2f.onrender.com/logout",{
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).then(resp => resp.json())
+  }
   
   function filterPatients() {  
     const q = searchInput.value.toLowerCase().trim();  
@@ -572,7 +581,6 @@ transform: translateX(0);
   window.addEventListener('resize', adjustLayout);  
   window.addEventListener('load', () => {  
     adjustLayout();  
-    renderTable(patients);  
   
     const prefs = JSON.parse(localStorage.getItem('settingsPrefs') || '{"darkMode": true}');  
     document.body.setAttribute('data-theme', prefs.darkMode ? 'dark' : 'light');  

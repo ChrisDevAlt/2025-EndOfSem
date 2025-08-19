@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Login | Patient Management System</title>
-  <link rel="icon" type="image/svg+xml" href="hospital-svgrepo-com.svg">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -34,7 +33,7 @@
 
     .login-box {
       background: rgba(255, 255, 255, 0.15);
-      border-radius: 80px;
+      border-radius: 16px;
       box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -70,9 +69,9 @@
     }
 
     .login-form input {
-      padding: 8px;
+      padding: 12px;
       border: none;
-      border-radius: 16px;
+      border-radius: 8px;
       outline: none;
       font-size: 14px;
       background-color: rgba(255, 255, 255, 0.8);
@@ -91,7 +90,7 @@
       background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 600px;
+      border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
@@ -206,29 +205,25 @@
   <div class="background">
     <div class="login-box">
       <div class="logo">
-        <img src="hospital-svgrepo-com.svg" alt="Medical Logo">
+        <img src="./images/hospital-svgrepo-com.svg" alt="Medical Logo">
         <h2>Patient Management</h2>
       </div>
 
-      <form class="login-form" onsubmit="return handleLogin(event)">
-        <label for="username">👤 Username</label>
+      <form id="login-form" class="login-form">
+        <label for="username">👤 Email</label>
         <input type="text" id="username" name="username" required placeholder="Enter username">
 
         <label for="password">🔒 Password</label>
         <input type="password" id="password" name="password" required placeholder="Enter password">
 
         <button type="submit">Login</button>
-
-        <div class="extras">
-          <a href="forgot_password.html">Forgot password?</a>
-        </div>
       </form>
     </div>
   </div>
   <div id="loader" class="loader-screen active">
     <div class="loader-content">
       <div class="logo-wrapper">
-        <img src="hospital-svgrepo-com.svg" alt="Loading logo" class="loader-logo">
+        <img src="./images/hospital-svgrepo-com.svg" alt="Loading logo" class="loader-logo">
         <svg class="ekg ekg--original" viewBox="0 0 300 195" preserveAspectRatio="xMinYMin">
           <g transform="translate(-0.13703948,-768.38124)">
             <path
@@ -255,40 +250,36 @@
         }, 500);
       }, 2000);
     });
-    const users = [
-      { username: "dr.john", password: "doctor123", role: "doctor" },
-      { username: "nurse.joy", password: "nurse123", role: "nurse" },
-      { username: "dr.smith", password: "smithpass", role: "doctor" },
-      { username: "nurse.sam", password: "samnurse", role: "nurse" }
-    ];
+    const form = document.getElementById("login-form")
 
-    function handleLogin(event) {
+    form.addEventListener("submit",(event)=> {
       event.preventDefault();
       const loader = document.getElementById("loader");
       loader.style.display = "flex";
       loader.classList.add("active");
 
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
+      const data = Object.fromEntries(new FormData(form).entries())
+      const cred = {
+        email: String(data.username),
+        password: String(data.password)
+      }
 
-      const user = users.find(
-        u => u.username === username && u.password === password
-      );
-
-      setTimeout(() => {
-        if (user) {
-          if (user.role === "nurse") {
-            window.location.href = "dashboard.html";
-          } else {
-            alert("Unknown role assigned.");
-          }
+      fetch("https://patient-management-7d2f.onrender.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body:JSON.stringify(cred)
+      }).then((response) => response.json()).then((data)=>{
+        console.log(data)
+        if (data.success === true){
+          location.href = "/dashboard"
         } else {
-          loader.classList.remove("active");
-          loader.style.display = "none";
-          alert("Invalid username or password.");
+          alert("Wrong credentials")
+          location.reload()
         }
-      }, 1500);
-    }
+      })
+    })
   </script>
 </body>
 </html>
