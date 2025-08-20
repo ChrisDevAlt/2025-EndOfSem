@@ -22,10 +22,11 @@ app.add_middleware(
 templates = Jinja2Templates(directory="templates")
 db = DBApi(patients=Patient, doctors=Doctor)
 app.mount("/images", StaticFiles(directory="images"), name="static")
+black_list = set()
 
 async def check_session(request: Request):
     id = request.cookies.get("identifier")
-    if not id:
+    if not id or id in black_list:
         return {"success": False}
     return {"success": True, "id":id}
         
@@ -96,10 +97,12 @@ async def login(cred: Dict[str, str],response: Response):
     if hashlib.sha256(cred["password"].encode("utf-8")).hexdigest() != result.password:
         return {"success": False}
     expiry_time = datetime.utcnow()+timedelta(hours=2)
+    black_list.remove(result.id)
     response.set_cookie("identifier", result.id, expires=expiry_time.strftime("%a %d %b %Y %H:%M:%S GMT"), httponly=True, secure=True, samesite="lax")
     return {"success": True}
 
 @app.get("/logout")
 async def logout(response: Response, request: Request):
     response.delete_cookie(key="identifier", httponly=True, secure=True, samesite="lax")
+    black_list.add(request.cookies.get("identifier"))
     return templates.TemplateResponse(request=request, name="index.html", context={})

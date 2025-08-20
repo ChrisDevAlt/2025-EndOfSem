@@ -403,7 +403,7 @@ input[type="checkbox"] {
     <a href="add_patient">Add Patient</a>  
     <a href="view_patients">View Patients</a>  
     <a href="settings" class="active">Settings</a>  
-    <a onclick="return logout(event)" class="logout">Logout</a>  
+    <a href="logout" class="logout">Logout</a>  
   </nav>  
 </div>  
 
@@ -539,14 +539,6 @@ notificationsCheckbox.addEventListener('change', () => {
   
     loadPreferences();  
 
-    function logout(event) {
-    fetch("https://patient-management-7d2f.onrender.com/logout",{
-      method: "GET", 
-      headers: {
-        "Content-Type": "application/json",
-      }
-    }).then(resp => resp.json())
-  }
   </script> 
 <script>
   window.addEventListener("load", () => {

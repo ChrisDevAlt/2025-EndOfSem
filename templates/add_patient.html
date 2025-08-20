@@ -198,7 +198,7 @@
         <a href="add_patient" class="tooltip active" data-tooltip="Add Patient"><span class="label">Add Patient</span></a>
         <a href="view_patients" class="tooltip" data-tooltip="View Patients"><span class="label">View Patients</span></a>
         <a href="settings" class="tooltip" data-tooltip="Settings"><span class="label">Settings</span></a>
-        <a onclick="return logout(event)" class="logout tooltip" data-tooltip="Logout"><span class="label">Logout</span></a>
+        <a href="logout" class="logout tooltip" data-tooltip="Logout"><span class="label">Logout</span></a>
       </nav>
     </aside>
     <main class="main-content" aria-label="Main content" id="mainContent">
@@ -279,15 +279,6 @@
         toggleBtn.classList.add('hidden');
       }
     }
-
-    function logout(event) {
-    fetch("https://patient-management-7d2f.onrender.com//logout",{
-      method: "GET", 
-      headers: {
-        "Content-Type": "application/json",
-      }
-    }).then(resp => resp.json())
-  }
 
     function closeSidebar() {
       if (window.innerWidth < 900) {
