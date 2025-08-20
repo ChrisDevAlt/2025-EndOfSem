@@ -32,10 +32,9 @@ async def check_session(request: Request):
 
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, commonDep: dict = Depends(check_session)):
+def dashboard(request: Request, commonDep: dict = Depends(check_session)):
     if commonDep["success"] == False:
         return templates.TemplateResponse(request=request, name="index.html", context={})
-    print(commonDep)
     patients = db.get_patients(commonDep["id"])
     doctor = db.get_doctor(id=commonDep["id"], email=None)
     mostRecent = patients[:6:-1] if len(patients) >= 7 else patients[::-1]

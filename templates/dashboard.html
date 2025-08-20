@@ -569,7 +569,6 @@
       </section>
     </main>
   </div>
-
   <script>
     const sidebar = document.getElementById('sidebar');
     const backdrop = document.getElementById('backdrop');
@@ -578,7 +577,7 @@
 
     let collapsed = false;
 
-    let patients = {{recentPatients | tojson}};
+    let patients = {{recentPatients | default([]) | tojson}};
 
     function openSidebar() {
       if (window.innerWidth < 900) {

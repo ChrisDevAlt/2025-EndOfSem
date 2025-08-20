@@ -485,7 +485,7 @@ transform: translateX(0);
   const mainContent = document.getElementById('mainContent');  
   const searchInput = document.getElementById('searchInput');  
   
-  const patients = {{patientsList | tojson}};  
+  const patients = {{patientsList| default([]) | tojson}};  
   
   let collapsed = false;  
   

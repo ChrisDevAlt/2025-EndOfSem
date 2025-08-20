@@ -254,19 +254,21 @@
           </div>
 
           <div class="form-actions">
-            <button class="btn" type="submit">Save Patient</button>
+            <button id="save-patientBtn" class="btn" type="submit">Save Patient</button>
             <button class="btn secondary" type="reset">Clear</button>
           </div>
         </form>
       </section>
     </main>
   </div>
-
   <script>
     const sidebar = document.getElementById('sidebar');
     const backdrop = document.getElementById('backdrop');
     const toggleBtn = document.getElementById('toggleBtn');
     const mainContent = document.getElementById('mainContent');
+    const loader = document.getElementById('loader');
+
+
 
     let collapsed = false;
 
@@ -356,7 +358,6 @@
     window.addEventListener('load', () => {
       applySavedTheme();
       adjustLayout();
-      const loader = document.getElementById('loader');
       setTimeout(() => {
         loader.classList.remove('active');
         setTimeout(() => { loader.style.display = 'none'; }, 500);
@@ -382,7 +383,8 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      event.currentTarget.disabled = true
+      const saveBtn = document.getElementById("save-patientBtn")
+      saveBtn.setAttribute("disabled", "true")
       const data = Object.fromEntries(new FormData(form).entries());
       if (!data.name || !data.age || !data.gender || !data.phone || !data.condition) {
         alert('Please fill out all required fields.');
@@ -399,7 +401,6 @@
         notes: String(data.notes || '').trim(),
         // lastVisit: new Date().toISOString().slice(0,10)
       };
-
       fetch("https://patient-management-7d2f.onrender.com/add_patient", {
         method: "POST",
         headers: {
@@ -410,9 +411,11 @@
         console.log(response)
         return response.json()
       }).then((data)=>{
+        saveBtn.setAttribute("disabled", "false")
         if (data.success === true) {
-          this.disabled = true
           location.href = "/view_patients"
+        } else {
+          alert("failed to add")
         }
       })
 
