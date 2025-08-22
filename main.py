@@ -97,7 +97,8 @@ async def login(cred: Dict[str, str],response: Response):
     if hashlib.sha256(cred["password"].encode("utf-8")).hexdigest() != result.password:
         return {"success": False}
     expiry_time = datetime.utcnow()+timedelta(hours=2)
-    black_list.remove(result.id)
+    if result.id in black_list:
+        black_list.remove(result.id)
     response.set_cookie("identifier", result.id, expires=expiry_time.strftime("%a %d %b %Y %H:%M:%S GMT"), httponly=True, secure=True, samesite="lax")
     return {"success": True}
 
